@@ -1,5 +1,5 @@
-import RestBtn from "../RestBoard/RestBtn";
-
+import RestBtn from "./RestBtn";
+import React from "react";
 
 export default function RestBoard() {
     return (

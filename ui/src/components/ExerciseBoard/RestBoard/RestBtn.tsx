@@ -1,4 +1,5 @@
-import { secondsToPrettyString } from "../../functions/time";
+import { secondsToPrettyString } from "../../../functions/time";
+import React from "react";
 
 type RestBtnProps = {
     restSeconds: number,
