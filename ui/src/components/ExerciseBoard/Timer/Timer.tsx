@@ -1,50 +1,48 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   SECONDS_FORMAT_TIMER,
   secondsToPrettyString,
 } from "../../../functions/time";
-import { TimerActivityStatus, TimerProps } from "./timer-types";
+import { TimerProps } from "../../../app-types";
 import PlayToolbar from "./PlayToolbar";
-import { flushSync } from "react-dom";
+import { SESSION_PAUSED, SESSION_STARTED, SESSION_STOPPED } from "../ExerciseBoard";
 
 const TIME_INTERVAL_MS = 1000;
 
 export const TIMER_ACTIVITY_STATUS_EXERCISING = "Exercising";
 export const TIMER_ACTIVITY_STATUS_RESTING = "Resting";
 
-export const SESSION_STOPPED = 0;
-export const SESSION_STARTED = 1;
-export const SESSION_PAUSED = 2;
-
 export default function Timer({
-  timerInit,
+  timerInitSeconds,
+  timerActivityStatus,
+  setTimerActivityStatusExercising,
+  sessionSate,
+  setSessionState
 }: TimerProps) {
-  const [timerState, setTimerState] = useState<number>(timerInit);
+  const [timerStateMs, setTimerStateMs] = useState<number>(timerInitSeconds * TIME_INTERVAL_MS);
   const refTimerId = useRef<NodeJS.Timer | null>(null);
-  const [timerActivityStatus, setTimerActivityStatus] = useState<TimerActivityStatus>(TIMER_ACTIVITY_STATUS_RESTING);
-  const [sessionSate, setSessionState] = useState<SESSION_STATUS>(SESSION_STOPPED);
 
   useEffect(() => {
     switch(sessionSate) {
       case SESSION_STARTED:
-        let timer = timerState;
+        let timerMs = timerStateMs;
 
         refTimerId.current = setInterval(() => {
           if (timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING) {
-            timer += TIME_INTERVAL_MS;
+            timerMs += TIME_INTERVAL_MS;
           } else if (timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING) {
-            timer -= TIME_INTERVAL_MS;
+            timerMs -= TIME_INTERVAL_MS;
           } else {
             throw new Error("Unknown activity status");
           }
 
-          setTimerState(timer);
+          setTimerStateMs(timerMs);
 
-          if (timer === 0) {
-            setTimerActivityStatus(TIMER_ACTIVITY_STATUS_EXERCISING);
+          if (timerMs === 0) {
+            setTimerActivityStatusExercising();
           }
 
-          console.log(timer)
+          console.log(timerMs)
         }, TIME_INTERVAL_MS);
         break;
       case SESSION_STOPPED:
@@ -70,9 +68,9 @@ export default function Timer({
   }
 
   function handleStop() {
-    setTimerState(0);
+    setTimerStateMs(0);
     clearTimer();
-    setTimerActivityStatus(TIMER_ACTIVITY_STATUS_EXERCISING);
+    setTimerActivityStatusExercising();
     setSessionState(SESSION_STOPPED);
   }
 
@@ -95,9 +93,10 @@ export default function Timer({
         onStopClick={() => {
           handleStop();
         }}
+        sessionSate={sessionSate}
       ></PlayToolbar>
       <div>
-        <h3>{secondsToPrettyString(timerState / 1000, SECONDS_FORMAT_TIMER)}</h3>
+        <h3>{secondsToPrettyString(timerStateMs / 1000, SECONDS_FORMAT_TIMER)}</h3>
         <span>{timerActivityStatus}</span>
       </div>
     </>

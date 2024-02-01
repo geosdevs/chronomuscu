@@ -24,7 +24,7 @@ export function secondsToPrettyString(
         case SECONDS_FORMAT_STANDARD:
         default:
             minutesStr = minutes > 0 ? `${minutes}min` : '';
-            secondsStr += 's';
+            secondsStr = minutes > 0 && secondsLeft === 0 ? '' : secondsStr + 's';
     }
 
     return minutesStr + secondsStr;

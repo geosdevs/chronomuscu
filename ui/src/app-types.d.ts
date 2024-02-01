@@ -4,8 +4,17 @@ import {
   TIMER_ACTIVITY_STATUS_RESTING,
 } from "./Timer";
 
+type SESSION_STATUS =
+  | typeof SESSION_STOPPED
+  | typeof SESSION_STARTED
+  | typeof SESSION_PAUSED;
+
 type TimerProps = {
-  timerInit: number
+  timerInitSeconds: number
+  timerActivityStatus: TimerActivityStatus
+  setTimerActivityStatusExercising: Function
+  sessionSate: SESSION_STATUS
+  setSessionState: Function
   onEachSeconds?: Function
   onPlayPause?: Function
   children?: React.ReactNode

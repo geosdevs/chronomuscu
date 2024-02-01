@@ -1,20 +1,42 @@
 import Goal from "./Goal";
 import SetsTable from "./SetsTable";
-import Timer, { TIMER_ACTIVITY_STATUS_RESTING } from "./Timer/Timer";
+import Timer, { TIMER_ACTIVITY_STATUS_EXERCISING, TIMER_ACTIVITY_STATUS_RESTING } from "./Timer/Timer";
 import { setsTableData } from "../tests/setsData";
-import PlayToolbar from "./Timer/PlayToolbar";
-import React, { useRef, useState } from "react";
-import { TimerActivityStatus } from "./Timer/timer-types";
 import RestBoard from "./RestBoard/RestBoard";
+import { createContext, useState } from "react";
+import { SESSION_STATUS, TimerActivityStatus } from "../../app-types";
+
+export const ExerciceBoardRestBtnClickContext = createContext<null | Function>(null);
+
+export const SESSION_STOPPED = 0;
+export const SESSION_STARTED = 1;
+export const SESSION_PAUSED = 2;
 
 export default function ExerciseBoard() {
-  function handlePlayTimer() {}
+  const [timerActivityStatus, setTimerActivityStatus] = useState<TimerActivityStatus>(TIMER_ACTIVITY_STATUS_EXERCISING);
+  const [timerInitSeconds, setTimerInitSeconds] = useState<number>(0);
+  const [sessionSate, setSessionState] = useState<SESSION_STATUS>(SESSION_STOPPED);
+
+  function handleRestBtnClick(timerSeconds: number) {
+    setTimerActivityStatus(TIMER_ACTIVITY_STATUS_RESTING);
+    setSessionState(SESSION_STARTED);
+    setTimerInitSeconds(timerSeconds);
+  }
 
   return (
     <>
       <section>
         <div>
-          <Timer timerInit={2000}></Timer>
+          <Timer
+            key={`timer-init-${timerInitSeconds}`}
+            timerInitSeconds={timerInitSeconds}
+            timerActivityStatus={timerActivityStatus}
+            setTimerActivityStatusExercising={() => {
+              setTimerActivityStatus(TIMER_ACTIVITY_STATUS_EXERCISING)
+            }}
+            sessionSate={sessionSate}
+            setSessionState={setSessionState}
+          ></Timer>
           <Goal></Goal>
         </div>
         <div>
@@ -23,7 +45,9 @@ export default function ExerciseBoard() {
       </section>
 
       <aside>
-        <RestBoard></RestBoard>
+        <ExerciceBoardRestBtnClickContext.Provider value={handleRestBtnClick}>
+          <RestBoard></RestBoard>
+        </ExerciceBoardRestBtnClickContext.Provider>
       </aside>
     </>
   );

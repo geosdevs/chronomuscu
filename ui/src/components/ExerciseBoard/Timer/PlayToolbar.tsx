@@ -1,10 +1,15 @@
 import React, { useState } from "react";
+import { SESSION_STATUS } from "../../../app-types";
+import { SESSION_STARTED } from "../ExerciseBoard";
 
 type PlayToolbarProps = {
   onPlayClick: (playPauseBtnState: SESSION_STATUS) => void;
   onPauseClick: (playPauseBtnState: SESSION_STATUS) => void;
   onStopClick: Function;
+  sessionSate: SESSION_STATUS;
 };
+
+type PlayPauseBtnState = typeof PLAY_BTN_STATE | typeof PAUSE_BTN_STATE;
 
 const PLAY_BTN_STATE = "Play";
 const PAUSE_BTN_STATE = "Pause";
@@ -13,8 +18,11 @@ export default function PlayToolbar({
   onPlayClick,
   onPauseClick,
   onStopClick,
+  sessionSate,
 }: PlayToolbarProps) {
-  const [playPauseBtnState, setPlayPauseBtnState] = useState(PAUSE_BTN_STATE);
+  const [playPauseBtnState, setPlayPauseBtnState] = useState<PlayPauseBtnState>(
+    sessionSate === SESSION_STARTED ? PLAY_BTN_STATE : PAUSE_BTN_STATE
+  );
 
   return (
     <div>
