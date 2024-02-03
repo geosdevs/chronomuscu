@@ -1,6 +1,6 @@
 import { secondsToPrettyString } from "../../../functions/time";
 import React, { useContext } from "react";
-import { ExerciceBoardRestBtnClickContext } from "../ExerciseBoard";
+import { ExerciseBoardRestBtnClickContext } from "../ExerciseBoard";
 
 type RestBtnProps = {
   restSeconds: number;
@@ -8,7 +8,7 @@ type RestBtnProps = {
 };
 
 export default function RestBtn({ restSeconds }: RestBtnProps) {
-  const onRestBtnClick = useContext(ExerciceBoardRestBtnClickContext);
+  const onRestBtnClick = useContext(ExerciseBoardRestBtnClickContext);
 
   return (
     <div>

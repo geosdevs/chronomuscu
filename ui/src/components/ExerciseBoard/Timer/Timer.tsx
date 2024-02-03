@@ -13,7 +13,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDumbbell, faHourglass } from "@fortawesome/free-solid-svg-icons";
 
-const TIME_INTERVAL_MS = 1000;
+export const TIME_INTERVAL_MS = 1000;
 
 export const TIMER_ACTIVITY_STATUS_EXERCISING = "Exercising";
 export const TIMER_ACTIVITY_STATUS_RESTING = "Resting";
@@ -24,37 +24,37 @@ export default function Timer({
   setTimerActivityStatusExercising,
   sessionSate,
   setSessionState,
+  prevRestingTimerMs,
+  setPrevRestingTimerMs
 }: TimerProps) {
   const [timerStateMs, setTimerStateMs] = useState<number>(
     timerInitSeconds * TIME_INTERVAL_MS
   );
   const refTimerId = useRef<NodeJS.Timer | null>(null);
-  const [restingProgress, setRestingProgress] = useState<number>(0);
-  const [prevRestingTimerMs, setPrevRestingTimerMs] = useState(0);
+  let restingProgress = 0;
+
+  if (prevRestingTimerMs > 0 && timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING) {
+    restingProgress = timerStateMs / prevRestingTimerMs * 100;
+  }
 
   useEffect(() => {
     switch (sessionSate) {
       case SESSION_STARTED:
         if (!refTimerId.current) {
-          let timerMs = timerStateMs;
-
-          setPrevRestingTimerMs(timerMs);
-
           refTimerId.current = setInterval(() => {
-            if (timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING) {
-              timerMs += TIME_INTERVAL_MS;
-            } else if (timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING) {
-              timerMs -= TIME_INTERVAL_MS;
-              setRestingProgress(timerMs / prevRestingTimerMs * 100);
-            } else {
-              throw new Error("Unknown activity status");
-            }
+            setTimerStateMs((prevTimerMs) => {
+              let timerMs = prevTimerMs;
+              
+              if (timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING) {
+                timerMs += TIME_INTERVAL_MS;
+              } else if (timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING) {
+                timerMs -= TIME_INTERVAL_MS;
+              } else {
+                throw new Error("Unknown activity status");
+              }
 
-            setTimerStateMs(timerMs);
-
-            if (timerMs === 0) {
-              setTimerActivityStatusExercising();
-            }
+              return timerMs;
+            });
           }, TIME_INTERVAL_MS);
         }
         break;
@@ -69,11 +69,13 @@ export default function Timer({
     return () => {
       clearTimer();
     };
-  }, [
-    sessionSate,
-    timerActivityStatus,
-    prevRestingTimerMs
-  ]);
+  }, [sessionSate, timerActivityStatus, setTimerActivityStatusExercising]);
+
+  useEffect(() => {
+    if (timerStateMs === 0) {
+      setTimerActivityStatusExercising();
+    }
+  }, [timerStateMs, setTimerActivityStatusExercising]);
 
   function handlePlay() {
     setSessionState(SESSION_STARTED);
@@ -129,7 +131,6 @@ export default function Timer({
         <span
           role="progressbar"
           aria-labelledby="ProgressLabel"
-          // aria-valuenow="75"
           className="block rounded-full bg-gray-200 my-2"
         >
           <span className="block h-3 rounded-full bg-indigo-600" style={{width: restingProgress + "%"}}></span>

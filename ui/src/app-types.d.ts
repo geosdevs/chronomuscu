@@ -15,6 +15,8 @@ type TimerProps = {
   setTimerActivityStatusExercising: Function
   sessionSate: SESSION_STATUS
   setSessionState: Function
+  prevRestingTimerMs: number
+  setPrevRestingTimerMs: Function
   onEachSeconds?: Function
   onPlayPause?: Function
   children?: React.ReactNode
@@ -23,3 +25,9 @@ type TimerProps = {
 type TimerActivityStatus =
   | typeof TIMER_ACTIVITY_STATUS_EXERCISING
   | typeof TIMER_ACTIVITY_STATUS_RESTING;
+
+type SetsHistoryData = {
+  id: number
+  activitySeconds: number
+  restSeconds: number
+}[];
