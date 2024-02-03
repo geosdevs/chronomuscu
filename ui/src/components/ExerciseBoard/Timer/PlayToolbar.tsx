@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { SESSION_STATUS } from "../../../app-types";
 import { SESSION_STARTED } from "../ExerciseBoard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPause, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import './PlayToolbar.css'
 
 type PlayToolbarProps = {
   onPlayClick: (playPauseBtnState: SESSION_STATUS) => void;
@@ -25,8 +28,9 @@ export default function PlayToolbar({
   );
 
   return (
-    <div>
+    <span className="h-fit mx-4 play-toolbar-flex inline-flex overflow-hidden rounded-md border bg-white shadow-sm my-2">
       <button
+        className="inline-block border-e p-3 text-gray-700 hover:bg-gray-50 focus:relative"
         onClick={() => {
           if (playPauseBtnState === PLAY_BTN_STATE) {
             setPlayPauseBtnState(PAUSE_BTN_STATE);
@@ -38,19 +42,20 @@ export default function PlayToolbar({
             throw new Error("Unknown play/pause button state");
           }
         }}
-      >
+        >
         {playPauseBtnState === PLAY_BTN_STATE
-          ? PAUSE_BTN_STATE
-          : PLAY_BTN_STATE}
+          ? <FontAwesomeIcon icon={faPause} />
+          : <FontAwesomeIcon icon={faPlay} />}
       </button>
       <button
+        className="inline-block border-e p-3 text-red-800 hover:bg-gray-50 focus:relative"
         onClick={() => {
           setPlayPauseBtnState(PAUSE_BTN_STATE);
           onStopClick();
         }}
-      >
-        Stop
+        >
+        <FontAwesomeIcon icon={faStop} />
       </button>
-    </div>
+    </span>
   );
 }

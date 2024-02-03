@@ -1,7 +1,7 @@
 import Goal from "./Goal";
 import SetsTable from "./SetsTable";
 import Timer, { TIMER_ACTIVITY_STATUS_EXERCISING, TIMER_ACTIVITY_STATUS_RESTING } from "./Timer/Timer";
-import { setsTableData } from "../tests/setsData";
+import { setsTableData } from "./setsData";
 import RestBoard from "./RestBoard/RestBoard";
 import { createContext, useState } from "react";
 import { SESSION_STATUS, TimerActivityStatus } from "../../app-types";
@@ -25,7 +25,7 @@ export default function ExerciseBoard() {
 
   return (
     <>
-      <section>
+      <section className="max-w-3xl mx-2 my-4">
         <div>
           <Timer
             key={`timer-init-${timerInitSeconds}`}

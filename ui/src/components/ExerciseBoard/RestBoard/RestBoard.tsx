@@ -6,7 +6,7 @@ export default function RestBoard() {
 
   // todo remove tmp effect
   useEffect(() => {
-    setRestTimers([2, 5, 10, 60, 90])
+    setRestTimers([2, 5, 10, 60, 90, 120, 180])
   }, [])
 
   return (
