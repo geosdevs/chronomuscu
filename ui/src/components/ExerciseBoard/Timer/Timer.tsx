@@ -25,7 +25,8 @@ export default function Timer({
   sessionSate,
   setSessionState,
   prevRestingTimerMs,
-  setPrevRestingTimerMs
+  setPrevRestingTimerMs,
+  onActivityTimerUpdate
 }: TimerProps) {
   const [timerStateMs, setTimerStateMs] = useState<number>(
     timerInitSeconds * TIME_INTERVAL_MS
@@ -69,13 +70,17 @@ export default function Timer({
     return () => {
       clearTimer();
     };
-  }, [sessionSate, timerActivityStatus, setTimerActivityStatusExercising]);
+  }, [sessionSate, timerActivityStatus]);
 
   useEffect(() => {
     if (timerStateMs === 0) {
       setTimerActivityStatusExercising();
     }
   }, [timerStateMs, setTimerActivityStatusExercising]);
+
+  useEffect(() => {
+    onActivityTimerUpdate(timerStateMs);
+  }, [onActivityTimerUpdate, timerStateMs]);
 
   function handlePlay() {
     setSessionState(SESSION_STARTED);
@@ -117,17 +122,19 @@ export default function Timer({
       ></PlayToolbar>
 
       <div className="my-2 min-w-80">
-        {
-          [SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) ? (
-            <span className="font-bold text-5xl text-gray-400">
+        <div className="text-center">
+          {
+            [SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) ? (
+              <span className="font-bold text-5xl text-gray-400">
+                {secondsToPrettyString(timerStateMs / 1000, SECONDS_FORMAT_TIMER)}
+              </span>
+            ) : (
+            <span className="font-bold text-5xl">
               {secondsToPrettyString(timerStateMs / 1000, SECONDS_FORMAT_TIMER)}
             </span>
-          ) : (
-          <span className="font-bold text-5xl">
-            {secondsToPrettyString(timerStateMs / 1000, SECONDS_FORMAT_TIMER)}
-          </span>
-          )
-        }
+            )
+          }
+        </div>
         <span
           role="progressbar"
           aria-labelledby="ProgressLabel"
@@ -136,23 +143,25 @@ export default function Timer({
           <span className="block h-3 rounded-full bg-indigo-600" style={{width: restingProgress + "%"}}></span>
         </span>
         
-        {
-          timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING ? (
-            <span
+        <span className="ml-1">
+          {
+            timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING ? (
+              <span
               className="inline-flex items-center justify-center rounded-full bg-orange-100 px-2.5 py-0.5 text-orange-700"
-            >
-              <FontAwesomeIcon icon={faDumbbell} />
-              <p className="whitespace-nowrap ml-1 text-sm">{timerActivityStatus}</p>
-            </span>
-          ) : (
-            <span
+              >
+                <FontAwesomeIcon icon={faDumbbell} size="lg" />
+                <p className="whitespace-nowrap ml-1 text-sm">{timerActivityStatus}</p>
+              </span>
+            ) : (
+              <span
               className="inline-flex items-center justify-center rounded-full bg-blue-100 px-2.5 py-0.5 text-blue-700"
-            >
-              <FontAwesomeIcon icon={faHourglass} />
-              <p className="whitespace-nowrap ml-1 text-sm">{timerActivityStatus}</p>
-            </span>
-          )
-        }
+              >
+                <FontAwesomeIcon icon={faHourglass} size="lg" />
+                <p className="whitespace-nowrap ml-1 text-sm">{timerActivityStatus}</p>
+              </span>
+            )
+          }
+        </span>
         
       </div>
     </div>

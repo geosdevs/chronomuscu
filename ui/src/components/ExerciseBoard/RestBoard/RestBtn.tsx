@@ -11,9 +11,9 @@ export default function RestBtn({ restSeconds }: RestBtnProps) {
   const onRestBtnClick = useContext(ExerciseBoardRestBtnClickContext);
 
   return (
-    <div>
+    <div className="m-1">
       <button
-        className="rounded-full border border-indigo-600 p-3 text-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-500"
+        className="rounded-full text-white hover:scale-110  bg-indigo-600 p-3 transition hover:bg-indigo-400 focus:outline-none focus:ring"
         onClick={() => {
           if (typeof onRestBtnClick === "function") {
             onRestBtnClick(restSeconds);

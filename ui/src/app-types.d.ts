@@ -17,6 +17,7 @@ type TimerProps = {
   setSessionState: Function
   prevRestingTimerMs: number
   setPrevRestingTimerMs: Function
+  onActivityTimerUpdate: Function
   onEachSeconds?: Function
   onPlayPause?: Function
   children?: React.ReactNode
