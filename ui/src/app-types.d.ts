@@ -4,7 +4,7 @@ import {
   TIMER_ACTIVITY_STATUS_RESTING,
 } from "./Timer";
 
-type SESSION_STATUS =
+type SessionStatus =
   | typeof SESSION_STOPPED
   | typeof SESSION_STARTED
   | typeof SESSION_PAUSED;
@@ -13,13 +13,11 @@ type TimerProps = {
   timerInitSeconds: number
   timerActivityStatus: TimerActivityStatus
   setTimerActivityStatusExercising: Function
-  sessionSate: SESSION_STATUS
+  sessionSate: SessionStatus
   setSessionState: Function
   prevRestingTimerMs: number
   setPrevRestingTimerMs: Function
-  onActivityTimerUpdate: Function
-  onEachSeconds?: Function
-  onPlayPause?: Function
+  setsHistoryRef: MutableRefObject<SetsHistoryData[]>
   children?: React.ReactNode
 };
 
@@ -31,4 +29,4 @@ type SetsHistoryData = {
   id: number
   activitySeconds: number
   restSeconds: number
-}[];
+};

@@ -6,10 +6,14 @@ type RestBoardProps = {
 }
 
 export default function RestBtnGroup(props: RestBoardProps) {
-  const classes = ['flex', `flex-${props.flexDirection || 'row'}`];
+  const flexDirectionProp = props.flexDirection ?? "row";
+  const flexDirection = {
+    "row": 'flex-row',
+    "col": 'flex-col'
+  };
 
   return (
-    <div className={classes.join(' ')}>
+    <div className={`flex ${flexDirection[flexDirectionProp]} flex-wrap w-fit`}>
       {props.restTimers.map((restTimer) => (
         <RestBtn key={`rest-seconds-${restTimer}`} restSeconds={restTimer}></RestBtn>
         ))}

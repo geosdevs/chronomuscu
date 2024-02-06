@@ -9,11 +9,21 @@ type RestBtnProps = {
 
 export default function RestBtn({ restSeconds }: RestBtnProps) {
   const onRestBtnClick = useContext(ExerciseBoardRestBtnClickContext);
+  let bgColor;
+  
+  if (restSeconds >= 60 && restSeconds < 120) {
+    bgColor = "bg-indigo-700";
+  } else if (restSeconds >= 120) {
+    bgColor = "bg-indigo-800";
+  } else {
+    bgColor = 'bg-indigo-600';
+  }
 
   return (
-    <div className="m-1">
       <button
-        className="rounded-full text-white hover:scale-110  bg-indigo-600 p-3 transition hover:bg-indigo-400 focus:outline-none focus:ring"
+        className={`m-1 rounded-full text-white hover:scale-110 
+        ${bgColor} p-3 transition hover:bg-indigo-300 
+        focus:outline-none focus:ring`}
         onClick={() => {
           if (typeof onRestBtnClick === "function") {
             onRestBtnClick(restSeconds);
@@ -22,6 +32,5 @@ export default function RestBtn({ restSeconds }: RestBtnProps) {
       >
         {secondsToPrettyString(restSeconds)}
       </button>
-    </div>
   );
 }

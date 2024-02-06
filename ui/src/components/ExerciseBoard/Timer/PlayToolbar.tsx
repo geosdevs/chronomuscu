@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { SESSION_STATUS } from "../../../app-types";
+import { SessionStatus } from "../../../app-types";
 import { SESSION_STARTED } from "../ExerciseBoard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPause, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 import './PlayToolbar.css'
 
 type PlayToolbarProps = {
-  onPlayClick: (playPauseBtnState: SESSION_STATUS) => void;
-  onPauseClick: (playPauseBtnState: SESSION_STATUS) => void;
+  onPlayClick: (playPauseBtnState: SessionStatus) => void;
+  onPauseClick: (playPauseBtnState: SessionStatus) => void;
   onStopClick: Function;
-  sessionSate: SESSION_STATUS;
+  sessionSate: SessionStatus;
 };
 
 type PlayPauseBtnState = typeof PLAY_BTN_STATE | typeof PAUSE_BTN_STATE;
