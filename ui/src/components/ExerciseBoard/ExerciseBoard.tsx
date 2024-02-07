@@ -18,6 +18,8 @@ import {
 export const ExerciseBoardRestBtnClickContext = createContext<null | Function>(
   null
 );
+export const ExerciseBoardSetsHistoryRemoveContext =
+  createContext<null | Function>(null);
 
 export const SESSION_STOPPED = 0;
 export const SESSION_STARTED = 1;
@@ -32,6 +34,10 @@ export default function ExerciseBoard() {
   const [prevRestingTimerMs, setPrevRestingTimerMs] = useState<number>(0);
   const [restTimers, setRestTimers] = useState<number[]>([]);
   const setsHistoryRef = useRef<SetsHistoryData[]>([]);
+  // only to trigger a new UI render when removing a set history
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [latestRemovedHistory, setLatestRemovedHistory] =
+    useState<SetsHistoryData | null>(null);
 
   // todo remove tmp effect
   useEffect(() => {
@@ -53,22 +59,37 @@ export default function ExerciseBoard() {
     }
   }
 
+  function handleSetHistoryRemove(setHistoryId: number) {
+    setsHistoryRef.current = setsHistoryRef.current.filter(
+      (setHistory: SetsHistoryData) => {
+        if (setHistory.id === setHistoryId) {
+          setLatestRemovedHistory(setHistory);
+        }
+        return setHistory.id !== setHistoryId;
+      }
+    );
+  }
+
   return (
     <>
       <section className="max-w-3xl w-fit mx-2 my-4 grid">
-        <Timer
-          key={`timer-init-${timerInitSeconds}`}
-          timerInitSeconds={timerInitSeconds}
-          timerActivityStatus={timerActivityStatus}
-          setTimerActivityStatusExercising={() => {
-            setTimerActivityStatus(TIMER_ACTIVITY_STATUS_EXERCISING);
-          }}
-          sessionSate={sessionSate}
-          setSessionState={setSessionState}
-          prevRestingTimerMs={prevRestingTimerMs}
-          setPrevRestingTimerMs={setPrevRestingTimerMs}
-          setsHistoryRef={setsHistoryRef}
-        ></Timer>
+        <ExerciseBoardSetsHistoryRemoveContext.Provider
+          value={handleSetHistoryRemove}
+        >
+          <Timer
+            key={`timer-init-${timerInitSeconds}`}
+            timerInitSeconds={timerInitSeconds}
+            timerActivityStatus={timerActivityStatus}
+            setTimerActivityStatusExercising={() => {
+              setTimerActivityStatus(TIMER_ACTIVITY_STATUS_EXERCISING);
+            }}
+            sessionSate={sessionSate}
+            setSessionState={setSessionState}
+            prevRestingTimerMs={prevRestingTimerMs}
+            setPrevRestingTimerMs={setPrevRestingTimerMs}
+            setsHistoryRef={setsHistoryRef}
+          ></Timer>
+        </ExerciseBoardSetsHistoryRemoveContext.Provider>
         <ExerciseBoardRestBtnClickContext.Provider value={handleRestBtnClick}>
           <div className="m-2 col-span-2 row-span-2 col-start-3 row-start-2 w-2/4">
             <RestBtnGroup

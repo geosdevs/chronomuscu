@@ -1,10 +1,11 @@
-import React, { Fragment, MutableRefObject } from "react";
+import React, { Fragment, MutableRefObject, useContext } from "react";
 import { secondsToPrettyString } from "../../../functions/time";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDumbbell,
   faHashtag,
   faHourglass,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   SessionStatus,
@@ -12,7 +13,7 @@ import {
   TimerActivityStatus,
 } from "../../../app-types";
 import { TIMER_ACTIVITY_STATUS_EXERCISING, TIME_INTERVAL_MS } from "./Timer";
-import { SESSION_STARTED } from "../ExerciseBoard";
+import { ExerciseBoardSetsHistoryRemoveContext, SESSION_STARTED } from "../ExerciseBoard";
 import { getCurrentSetHistory, getNextSetHistoryId } from "./sets-table-functions";
 
 type SetsTableProps = {
@@ -29,7 +30,8 @@ export default function SetsTable({
   timerActivityStatus,
   timerSeconds,
 }: SetsTableProps) {
-  let i = 1;
+  let rowInc = 1;
+  const onSetHistoryRemove = useContext(ExerciseBoardSetsHistoryRemoveContext);
 
   function handleSetsHistory() {
     if (
@@ -50,6 +52,16 @@ export default function SetsTable({
     }
   }
 
+  function getHistoryRemoveBtnClasses(currentIndex: number): string {
+    const classes = ['leading-8'];
+
+    if (currentIndex === setsHistoryRef.current.length - 1) {
+      classes.push('hidden');
+    }
+
+    return classes.join(' ');
+  }
+
   handleSetsHistory();
 
   return (
@@ -61,12 +73,12 @@ export default function SetsTable({
           return (
             <Fragment key={row.id}>
               <div
-                className={"align-middle col-span-1 mx-2 my-1 " + rowStartClass}
+                className={"col-start-1 col-span-1 mx-2 my-1 " + rowStartClass}
               >
                 <FontAwesomeIcon icon={faHashtag} size="lg" />
-                <span className="text-lg font-bold">{i++}</span>
+                <span className="text-lg font-bold">{rowInc++}</span>
               </div>
-              <div className={"col-span-4 " + rowStartClass}>
+              <div className={"col-start-2 col-span-3 " + rowStartClass}>
                 <span className="align-middle mx-2 my-1 inline-flex items-center justify-center rounded-full bg-orange-100 px-2.5 py-0.5 text-orange-700">
                   <FontAwesomeIcon icon={faDumbbell} size="lg" />
                   <p className="whitespace-nowrap ml-1 txt-6xl">
@@ -83,6 +95,14 @@ export default function SetsTable({
                     </>
                   ): ''}
                 </span>
+              </div>
+              <div className={"col-start-5 col-span-1 " + rowStartClass}>
+                <button className={getHistoryRemoveBtnClasses(index)}
+                  onClick={() => {
+                  if (typeof onSetHistoryRemove === 'function') {
+                    onSetHistoryRemove(row.id);
+                  }
+                }}><FontAwesomeIcon icon={faXmark} /></button>
               </div>
             </Fragment>
           );
