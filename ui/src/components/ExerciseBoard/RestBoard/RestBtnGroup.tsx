@@ -3,6 +3,7 @@ import RestBtn from "./RestBtn";
 type RestBoardProps = {
   restTimers: number[]
   flexDirection?: "row" | "col"
+  readOnly: boolean
 }
 
 export default function RestBtnGroup(props: RestBoardProps) {
@@ -15,7 +16,7 @@ export default function RestBtnGroup(props: RestBoardProps) {
   return (
     <div className={`flex ${flexDirection[flexDirectionProp]} flex-wrap w-fit`}>
       {props.restTimers.map((restTimer) => (
-        <RestBtn key={`rest-seconds-${restTimer}`} restSeconds={restTimer}></RestBtn>
+        <RestBtn key={`rest-seconds-${restTimer}`} restSeconds={restTimer} readOnly={props.readOnly}></RestBtn>
         ))}
     </div>
   );

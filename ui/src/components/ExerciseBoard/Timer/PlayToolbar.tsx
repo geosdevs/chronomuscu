@@ -6,10 +6,11 @@ import { faPause, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 import './PlayToolbar.css'
 
 type PlayToolbarProps = {
-  onPlayClick: (playPauseBtnState: SessionStatus) => void;
-  onPauseClick: (playPauseBtnState: SessionStatus) => void;
-  onStopClick: Function;
-  sessionSate: SessionStatus;
+  onPlayClick: (playPauseBtnState: SessionStatus) => void
+  onPauseClick: (playPauseBtnState: SessionStatus) => void
+  onStopClick: Function
+  sessionSate: SessionStatus
+  readonly: boolean
 };
 
 type PlayPauseBtnState = typeof PLAY_BTN_STATE | typeof PAUSE_BTN_STATE;
@@ -22,6 +23,7 @@ export default function PlayToolbar({
   onPauseClick,
   onStopClick,
   sessionSate,
+  readonly
 }: PlayToolbarProps) {
   const [playPauseBtnState, setPlayPauseBtnState] = useState<PlayPauseBtnState>(
     sessionSate === SESSION_STARTED ? PLAY_BTN_STATE : PAUSE_BTN_STATE
@@ -30,16 +32,20 @@ export default function PlayToolbar({
   return (
     <span className="h-fit mx-4 play-toolbar-flex inline-flex overflow-hidden rounded-md border bg-white shadow-sm my-2">
       <button
-        className="inline-block border-e p-3 text-gray-700 hover:bg-gray-50 focus:relative"
+        disabled={readonly}
+        className="inline-block border-e p-3 text-gray-700 hover:bg-gray-50 focus:relative disabled:hidden"
         onClick={() => {
-          if (playPauseBtnState === PLAY_BTN_STATE) {
-            setPlayPauseBtnState(PAUSE_BTN_STATE);
-            onPauseClick(playPauseBtnState);
-          } else if (playPauseBtnState === PAUSE_BTN_STATE) {
-            setPlayPauseBtnState(PLAY_BTN_STATE);
-            onPlayClick(playPauseBtnState);
-          } else {
-            throw new Error("Unknown play/pause button state");
+          if (!readonly) {
+
+            if (playPauseBtnState === PLAY_BTN_STATE) {
+              setPlayPauseBtnState(PAUSE_BTN_STATE);
+              onPauseClick(playPauseBtnState);
+            } else if (playPauseBtnState === PAUSE_BTN_STATE) {
+              setPlayPauseBtnState(PLAY_BTN_STATE);
+              onPlayClick(playPauseBtnState);
+            } else {
+              throw new Error("Unknown play/pause button state");
+            }
           }
         }}
         >
@@ -48,10 +54,13 @@ export default function PlayToolbar({
           : <FontAwesomeIcon icon={faPlay} />}
       </button>
       <button
-        className="inline-block border-e p-3 text-red-800 hover:bg-gray-50 focus:relative"
+        disabled={readonly}
+        className="inline-block border-e p-3 text-red-800 hover:bg-gray-50 focus:relative disabled:hidden"
         onClick={() => {
-          setPlayPauseBtnState(PAUSE_BTN_STATE);
-          onStopClick();
+          if (!readonly) {
+            setPlayPauseBtnState(PAUSE_BTN_STATE);
+            onStopClick();
+          }
         }}
         >
         <FontAwesomeIcon icon={faStop} />

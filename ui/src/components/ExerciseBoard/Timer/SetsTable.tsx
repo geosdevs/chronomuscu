@@ -1,5 +1,5 @@
 import React, { Fragment, MutableRefObject, useContext } from "react";
-import { secondsToPrettyString } from "../../../functions/time";
+import { secondsToPrettyString } from "../../../helpers/time";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDumbbell,
@@ -18,9 +18,10 @@ import { getCurrentSetHistory, getNextSetHistoryId } from "./sets-table-function
 
 type SetsTableProps = {
   setsHistoryRef: MutableRefObject<SetsHistoryData[]>
-  sessionSate: SessionStatus;
-  timerActivityStatus: TimerActivityStatus;
-  timerSeconds: number;
+  sessionSate: SessionStatus
+  timerActivityStatus: TimerActivityStatus
+  timerSeconds: number
+  readOnly: boolean
   children?: React.ReactNode;
 };
 
@@ -29,6 +30,7 @@ export default function SetsTable({
   sessionSate,
   timerActivityStatus,
   timerSeconds,
+  readOnly
 }: SetsTableProps) {
   let rowInc = 1;
   const onSetHistoryRemove = useContext(ExerciseBoardSetsHistoryRemoveContext);
@@ -53,7 +55,7 @@ export default function SetsTable({
   }
 
   function getHistoryRemoveBtnClasses(currentIndex: number): string {
-    const classes = ['leading-8'];
+    const classes = ['leading-8', 'disabled:hidden'];
 
     if (currentIndex === setsHistoryRef.current.length - 1) {
       classes.push('hidden');
@@ -97,9 +99,9 @@ export default function SetsTable({
                 </span>
               </div>
               <div className={"col-start-5 col-span-1 " + rowStartClass}>
-                <button className={getHistoryRemoveBtnClasses(index)}
+                <button disabled={readOnly} className={getHistoryRemoveBtnClasses(index)}
                   onClick={() => {
-                  if (typeof onSetHistoryRemove === 'function') {
+                  if (!readOnly && typeof onSetHistoryRemove === 'function') {
                     onSetHistoryRemove(row.id);
                   }
                 }}><FontAwesomeIcon icon={faXmark} /></button>

@@ -6,6 +6,7 @@ import Timer, {
 import RestBtnGroup from "./RestBoard/RestBtnGroup";
 import { createContext, useEffect, useRef, useState } from "react";
 import {
+  ExerciseBoardData,
   SessionStatus,
   SetsHistoryData,
   TimerActivityStatus,
@@ -14,6 +15,14 @@ import {
   getCurrentSetHistory,
   getLastSetHistory,
 } from "./Timer/sets-table-functions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faForward } from "@fortawesome/free-solid-svg-icons";
+
+type ExerciseBoardProps = {
+  boardData: ExerciseBoardData;
+  isActive: boolean;
+  onNextExerciseClick: Function;
+};
 
 export const ExerciseBoardRestBtnClickContext = createContext<null | Function>(
   null
@@ -25,7 +34,11 @@ export const SESSION_STOPPED = 0;
 export const SESSION_STARTED = 1;
 export const SESSION_PAUSED = 2;
 
-export default function ExerciseBoard() {
+export default function ExerciseBoard({
+  boardData,
+  isActive,
+  onNextExerciseClick,
+}: ExerciseBoardProps) {
   const [timerActivityStatus, setTimerActivityStatus] =
     useState<TimerActivityStatus>(TIMER_ACTIVITY_STATUS_EXERCISING);
   const [timerInitSeconds, setTimerInitSeconds] = useState<number>(0);
@@ -38,41 +51,66 @@ export default function ExerciseBoard() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [latestRemovedHistory, setLatestRemovedHistory] =
     useState<SetsHistoryData | null>(null);
+  const [readOnlyState, setReadOnlyState] = useState<boolean>(false);
 
   // todo remove tmp effect
   useEffect(() => {
-    setRestTimers([2, 5, 10, 60, 90, 120, 180, 300]);
+    setRestTimers([2, 5, 10, 30, 60, 90, 120, 180, 300]);
   }, []);
 
   function handleRestBtnClick(timerSeconds: number) {
-    const currentSetHistory = SESSION_STARTED
-      ? getLastSetHistory(setsHistoryRef)
-      : getCurrentSetHistory(setsHistoryRef);
+    if (!readOnlyState) {
+      const currentSetHistory = SESSION_STARTED
+        ? getLastSetHistory(setsHistoryRef)
+        : getCurrentSetHistory(setsHistoryRef);
 
-    setTimerActivityStatus(TIMER_ACTIVITY_STATUS_RESTING);
-    setSessionState(SESSION_STARTED);
-    setTimerInitSeconds(timerSeconds);
-    setPrevRestingTimerMs(timerSeconds * TIME_INTERVAL_MS);
+      setTimerActivityStatus(TIMER_ACTIVITY_STATUS_RESTING);
+      setSessionState(SESSION_STARTED);
+      setTimerInitSeconds(timerSeconds);
+      setPrevRestingTimerMs(timerSeconds * TIME_INTERVAL_MS);
 
-    if (currentSetHistory) {
-      currentSetHistory.restSeconds = timerSeconds;
+      if (currentSetHistory) {
+        currentSetHistory.restSeconds = timerSeconds;
+      }
     }
   }
 
   function handleSetHistoryRemove(setHistoryId: number) {
-    setsHistoryRef.current = setsHistoryRef.current.filter(
-      (setHistory: SetsHistoryData) => {
-        if (setHistory.id === setHistoryId) {
-          setLatestRemovedHistory(setHistory);
+    if (!readOnlyState) {
+      setsHistoryRef.current = setsHistoryRef.current.filter(
+        (setHistory: SetsHistoryData) => {
+          if (setHistory.id === setHistoryId) {
+            setLatestRemovedHistory(setHistory);
+          }
+          return setHistory.id !== setHistoryId;
         }
-        return setHistory.id !== setHistoryId;
-      }
-    );
+      );
+    }
   }
 
   return (
-    <>
-      <section className="max-w-3xl w-fit mx-2 my-4 grid">
+    <div className={`max-w-xl my-2 p-2 pl-4 ${isActive ? "" : "hidden"}`}>
+      <div className="flex justify-between">
+        <h2 className="text-2xl">{boardData.exerciseName}</h2>
+        <a
+          className="group relative inline-block text-sm font-bold text-slate-600 focus:outline-none focus:ring active:text-slate-500"
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            onNextExerciseClick();
+            setReadOnlyState(true);
+          }}
+        >
+          <span className="rounded-lg absolute inset-0 translate-x-0 translate-y-0 bg-slate-600 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"></span>
+
+          <span className="rounded-lg relative block border hover:border-current bg-white px-2.5 py-1.5">
+            {" "}
+            Next <FontAwesomeIcon icon={faForward} />{" "}
+          </span>
+        </a>
+      </div>
+
+      <div className="w-fit mx-2 my-4 grid">
         <ExerciseBoardSetsHistoryRemoveContext.Provider
           value={handleSetHistoryRemove}
         >
@@ -88,20 +126,22 @@ export default function ExerciseBoard() {
             prevRestingTimerMs={prevRestingTimerMs}
             setPrevRestingTimerMs={setPrevRestingTimerMs}
             setsHistoryRef={setsHistoryRef}
+            readOnly={readOnlyState}
           ></Timer>
         </ExerciseBoardSetsHistoryRemoveContext.Provider>
         <ExerciseBoardRestBtnClickContext.Provider value={handleRestBtnClick}>
-          <div className="m-2 col-span-2 row-span-2 col-start-3 row-start-2 w-2/4">
+          <div className="m-2 col-span-2 row-span-2 col-start-3 row-start-2">
             <RestBtnGroup
               restTimers={restTimers.slice(0, 8)}
               flexDirection="row"
+              readOnly={readOnlyState}
             ></RestBtnGroup>
           </div>
           {/* <div className="col-span-3 col-start-1 row-start-3">
             <RestBtnGroup restTimers={restTimers.slice(5, 8)}></RestBtnGroup>
           </div> */}
         </ExerciseBoardRestBtnClickContext.Provider>
-      </section>
-    </>
+      </div>
+    </div>
   );
 }

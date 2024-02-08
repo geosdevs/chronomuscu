@@ -19,4 +19,19 @@ export const setsTableData = [
         activitySeconds: 31,
         restSeconds: 60
     },
-]
+];
+
+export const exerciseBoardsData = [
+    {
+        id: 1,
+        exerciseName: "Push up"
+    },
+    {
+        id: 2,
+        exerciseName: "Pull up"
+    },
+    {
+        id: 3,
+        exerciseName: "Squat"
+    },
+];

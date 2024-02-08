@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import {
   SECONDS_FORMAT_TIMER,
   secondsToPrettyString,
-} from "../../../functions/time";
-import { TimerProps } from "../../../app-types";
+} from "../../../helpers/time";
 import PlayToolbar from "./PlayToolbar";
 import {
   SESSION_PAUSED,
@@ -14,11 +13,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDumbbell, faHourglass } from "@fortawesome/free-solid-svg-icons";
 import Goal from "../Goal";
 import SetsTable from "./SetsTable";
+import { SessionStatus, SetsHistoryData, TimerActivityStatus } from "../../../app-types";
 
 export const TIME_INTERVAL_MS = 1000;
 
 export const TIMER_ACTIVITY_STATUS_EXERCISING = "Exercising";
 export const TIMER_ACTIVITY_STATUS_RESTING = "Resting";
+
+type TimerProps = {
+  timerInitSeconds: number
+  timerActivityStatus: TimerActivityStatus
+  setTimerActivityStatusExercising: Function
+  sessionSate: SessionStatus
+  setSessionState: Function
+  prevRestingTimerMs: number
+  setPrevRestingTimerMs: Function
+  setsHistoryRef: MutableRefObject<SetsHistoryData[]>
+  readOnly: boolean
+  children?: React.ReactNode
+};
 
 export default function Timer({
   timerInitSeconds,
@@ -28,7 +41,8 @@ export default function Timer({
   setSessionState,
   prevRestingTimerMs,
   setPrevRestingTimerMs,
-  setsHistoryRef
+  setsHistoryRef,
+  readOnly
 }: TimerProps) {
   const [timerStateMs, setTimerStateMs] = useState<number>(
     timerInitSeconds * TIME_INTERVAL_MS
@@ -85,16 +99,32 @@ export default function Timer({
     }
   }, [timerStateMs, setTimerActivityStatusExercising]);
 
+  useEffect(() => {
+    if (readOnly && refTimerId.current !== null) {
+      stopTimer();
+    }
+  });
+
   function handlePlay() {
-    setSessionState(SESSION_STARTED);
+    if (!readOnly) {
+      setSessionState(SESSION_STARTED);
+    }
   }
 
   function handlePause() {
-    clearTimer();
-    setSessionState(SESSION_PAUSED);
+    if (!readOnly) {
+      clearTimer();
+      setSessionState(SESSION_PAUSED);
+    }
   }
 
   function handleStop() {
+    if (!readOnly) {
+      stopTimer();
+    }
+  }
+
+  function stopTimer() {
     setTimerStateMs(0);
     setPrevRestingTimerMs(0);
     clearTimer();
@@ -111,7 +141,7 @@ export default function Timer({
 
   return (
     <>
-      <div className="row-span-1 col-span-4 w-fit">
+      <div className="row-span-1 col-span-4">
         <div className="flex rounded-xl bg-white p-4 ring ring-indigo-50 sm:p-6 lg:p-8">
           <PlayToolbar
             onPlayClick={(playPauseBtnState) => {
@@ -124,9 +154,10 @@ export default function Timer({
               handleStop();
             }}
             sessionSate={sessionSate}
+            readonly={readOnly}
           ></PlayToolbar>
 
-          <div className="my-2 min-w-80">
+          <div className="my-2 w-4/5">
             <div className="text-center">
               {[SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) ? (
                 <span className="font-bold text-5xl text-gray-400">
@@ -178,7 +209,7 @@ export default function Timer({
 
       <div className="row-span-2 col-span-2 w-fit my-2">
         <Goal></Goal>
-        <SetsTable setsHistoryRef={setsHistoryRef} sessionSate={sessionSate} timerActivityStatus={timerActivityStatus} timerSeconds={timerStateMs}></SetsTable>
+        <SetsTable setsHistoryRef={setsHistoryRef} sessionSate={sessionSate} timerActivityStatus={timerActivityStatus} timerSeconds={timerStateMs} readOnly={readOnly}></SetsTable>
       </div>
     </>
   );

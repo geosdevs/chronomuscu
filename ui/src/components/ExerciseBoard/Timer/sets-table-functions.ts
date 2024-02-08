@@ -1,8 +1,9 @@
 import { MutableRefObject } from "react";
 import { SetsHistoryData } from "../../../app-types";
+import { getLastItem } from "../../../helpers/functions";
 
 export function getLastSetHistory(setsHistoryRef: MutableRefObject<SetsHistoryData[]>) {
-  return setsHistoryRef.current[setsHistoryRef.current.length - 1];
+  return getLastItem<SetsHistoryData>(setsHistoryRef.current);
 }
 
 export function getNextSetHistoryId(setsHistoryRef: MutableRefObject<SetsHistoryData[]>): number {
