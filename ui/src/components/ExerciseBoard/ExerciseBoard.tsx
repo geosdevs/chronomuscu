@@ -89,11 +89,11 @@ export default function ExerciseBoard({
   }
 
   return (
-    <div className={`max-w-xl my-2 p-2 pl-4 ${isActive ? "" : "hidden"}`}>
-      <div className="flex justify-between">
+    <div className={`my-2 p-2 pl-4 ${isActive ? "" : "hidden"}`}>
+      <div className="flex">
         <h2 className="text-2xl">{boardData.exerciseName}</h2>
         <a
-          className="group relative inline-block text-sm font-bold text-slate-600 focus:outline-none focus:ring active:text-slate-500"
+          className="group ml-6 relative inline-block text-sm font-bold text-slate-600 focus:outline-none focus:ring active:text-slate-500"
           href="/"
           onClick={(e) => {
             e.preventDefault();
@@ -110,7 +110,7 @@ export default function ExerciseBoard({
         </a>
       </div>
 
-      <div className="w-fit mx-2 my-4 grid">
+      <div className="md:w-fit mx-2 my-4 grid">
         <ExerciseBoardSetsHistoryRemoveContext.Provider
           value={handleSetHistoryRemove}
         >
@@ -130,7 +130,7 @@ export default function ExerciseBoard({
           ></Timer>
         </ExerciseBoardSetsHistoryRemoveContext.Provider>
         <ExerciseBoardRestBtnClickContext.Provider value={handleRestBtnClick}>
-          <div className="m-2 col-span-2 row-span-2 col-start-3 row-start-2">
+          <div className="my-2 row-start-2 col-span-4 row-span-1 overflow-x-auto w-100 md:row-span-2 md:col-span-2 md:col-start-3">
             <RestBtnGroup
               restTimers={restTimers.slice(0, 8)}
               flexDirection="row"

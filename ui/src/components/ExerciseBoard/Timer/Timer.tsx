@@ -141,7 +141,7 @@ export default function Timer({
 
   return (
     <>
-      <div className="row-span-1 col-span-4">
+      <div className="row-span-1 col-span-4 row-start-1 w-100">
         <div className="flex rounded-xl bg-white p-4 ring ring-indigo-50 sm:p-6 lg:p-8">
           <PlayToolbar
             onPlayClick={(playPauseBtnState) => {
@@ -207,7 +207,7 @@ export default function Timer({
         </div>
       </div>
 
-      <div className="row-span-2 col-span-2 w-fit my-2">
+      <div className="w-fit my-2 row-span-2 col-span-4 row-start-3 md:col-span-2 md:row-start-2">
         <Goal></Goal>
         <SetsTable setsHistoryRef={setsHistoryRef} sessionSate={sessionSate} timerActivityStatus={timerActivityStatus} timerSeconds={timerStateMs} readOnly={readOnly}></SetsTable>
       </div>
