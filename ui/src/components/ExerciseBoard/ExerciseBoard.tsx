@@ -15,8 +15,7 @@ import {
   getCurrentSetHistory,
   getLastSetHistory,
 } from "./Timer/sets-table-functions";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faForward } from "@fortawesome/free-solid-svg-icons";
+import NextExerciseBtn from "./NextExerciseBtn";
 
 type ExerciseBoardProps = {
   boardData: ExerciseBoardData;
@@ -89,25 +88,13 @@ export default function ExerciseBoard({
   }
 
   return (
-    <div className={`my-2 p-2 pl-4 ${isActive ? "" : "hidden"}`}>
+    <div className={`my-2 p-2 md:pl-4 ${isActive ? "" : "hidden"}`}>
       <div className="flex">
-        <h2 className="text-2xl">{boardData.exerciseName}</h2>
-        <a
-          className="group ml-6 relative inline-block text-sm font-bold text-slate-600 focus:outline-none focus:ring active:text-slate-500"
-          href="/"
-          onClick={(e) => {
-            e.preventDefault();
-            onNextExerciseClick();
-            setReadOnlyState(true);
-          }}
-        >
-          <span className="rounded-lg absolute inset-0 translate-x-0 translate-y-0 bg-slate-600 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"></span>
-
-          <span className="rounded-lg relative block border hover:border-current bg-white px-2.5 py-1.5">
-            {" "}
-            Next <FontAwesomeIcon icon={faForward} />{" "}
-          </span>
-        </a>
+        <h2 className="text-2xl text-gunmetal">{boardData.exerciseName}</h2>
+        <NextExerciseBtn
+          onNextExerciseClick={onNextExerciseClick}
+          setReadOnlyState={setReadOnlyState}
+        ></NextExerciseBtn>
       </div>
 
       <div className="md:w-fit mx-2 my-4 grid">
@@ -115,7 +102,7 @@ export default function ExerciseBoard({
           value={handleSetHistoryRemove}
         >
           <Timer
-            key={`timer-init-${timerInitSeconds}`}
+            key={`timer-status-${timerActivityStatus}-amount-${timerInitSeconds}`}
             timerInitSeconds={timerInitSeconds}
             timerActivityStatus={timerActivityStatus}
             setTimerActivityStatusExercising={() => {

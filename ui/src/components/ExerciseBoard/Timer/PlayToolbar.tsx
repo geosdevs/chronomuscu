@@ -30,10 +30,10 @@ export default function PlayToolbar({
   );
 
   return (
-    <span className="h-fit mx-4 play-toolbar-flex inline-flex overflow-hidden rounded-md border bg-white shadow-sm my-2">
+    <span className="h-fit text-3xl play-toolbar-flex inline-flex overflow-hidden rounded-md bg-white my-2 mx-0 md:mx-4">
       <button
         disabled={readonly}
-        className="inline-block border-e p-3 text-gray-700 hover:bg-gray-50 focus:relative disabled:hidden"
+        className="mb-1 inline-block p-3 text-gray-700 hover:bg-gray-50 focus:relative disabled:hidden"
         onClick={() => {
           if (!readonly) {
 
@@ -55,7 +55,7 @@ export default function PlayToolbar({
       </button>
       <button
         disabled={readonly}
-        className="inline-block border-e p-3 text-red-800 hover:bg-gray-50 focus:relative disabled:hidden"
+        className="inline-block p-3 text-red-800 hover:bg-gray-50 focus:relative disabled:hidden"
         onClick={() => {
           if (!readonly) {
             setPlayPauseBtnState(PAUSE_BTN_STATE);

@@ -45,14 +45,14 @@ function App() {
   }
 
   return (
-    <div className="App flex App-flex">
+    <div className="App flex App-flex h-full">
       <header className="App-header">
         <h1>Chronomuscu</h1>
       </header>
-      <nav className='fixed'>
+      <nav className='fixed bg-gunmetal'>
         <AppMenu activeBoardId={activeBoardId} exerciseBoards={exerciseBoards} onExerciseBoardSelection={handleExerciseBoardSelection}></AppMenu>
       </nav>
-      <section className='pl-16'>
+      <section className='pl-12 md:pl-16 bg-zinc-100 h-full'>
         <ExerciseBoardList exerciseBoards={exerciseBoards} activeBoardId={activeBoardId} onNextExerciseClick={handleNextExerciseClick}></ExerciseBoardList>
       </section>
     </div>

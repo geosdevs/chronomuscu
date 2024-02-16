@@ -13,7 +13,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDumbbell, faHourglass } from "@fortawesome/free-solid-svg-icons";
 import Goal from "../Goal";
 import SetsTable from "./SetsTable";
-import { SessionStatus, SetsHistoryData, TimerActivityStatus } from "../../../app-types";
+import {
+  SessionStatus,
+  SetsHistoryData,
+  TimerActivityStatus,
+} from "../../../app-types";
+import clsx from "clsx";
 
 export const TIME_INTERVAL_MS = 1000;
 
@@ -21,16 +26,16 @@ export const TIMER_ACTIVITY_STATUS_EXERCISING = "Exercising";
 export const TIMER_ACTIVITY_STATUS_RESTING = "Resting";
 
 type TimerProps = {
-  timerInitSeconds: number
-  timerActivityStatus: TimerActivityStatus
-  setTimerActivityStatusExercising: Function
-  sessionSate: SessionStatus
-  setSessionState: Function
-  prevRestingTimerMs: number
-  setPrevRestingTimerMs: Function
-  setsHistoryRef: MutableRefObject<SetsHistoryData[]>
-  readOnly: boolean
-  children?: React.ReactNode
+  timerInitSeconds: number;
+  timerActivityStatus: TimerActivityStatus;
+  setTimerActivityStatusExercising: Function;
+  sessionSate: SessionStatus;
+  setSessionState: Function;
+  prevRestingTimerMs: number;
+  setPrevRestingTimerMs: Function;
+  setsHistoryRef: MutableRefObject<SetsHistoryData[]>;
+  readOnly: boolean;
+  children?: React.ReactNode;
 };
 
 export default function Timer({
@@ -42,10 +47,10 @@ export default function Timer({
   prevRestingTimerMs,
   setPrevRestingTimerMs,
   setsHistoryRef,
-  readOnly
+  readOnly,
 }: TimerProps) {
   const [timerStateMs, setTimerStateMs] = useState<number>(
-    timerInitSeconds * TIME_INTERVAL_MS
+    getTimerInitValueMs(timerInitSeconds, timerActivityStatus)
   );
   const refTimerId = useRef<NodeJS.Timer | null>(null);
   let restingProgress = 0;
@@ -105,6 +110,15 @@ export default function Timer({
     }
   });
 
+  function getTimerInitValueMs(
+    wantedAmount: number,
+    timerActivityStatus: TimerActivityStatus
+  ) {
+    return timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING
+      ? 0
+      : wantedAmount * TIME_INTERVAL_MS;
+  }
+
   function handlePlay() {
     if (!readOnly) {
       setSessionState(SESSION_STARTED);
@@ -160,7 +174,7 @@ export default function Timer({
           <div className="my-2 w-4/5">
             <div className="text-center">
               {[SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) ? (
-                <span className="font-bold text-5xl text-gray-400">
+                <span className="font-bold text-5xl text-frenchgray">
                   {secondsToPrettyString(
                     timerStateMs / 1000,
                     SECONDS_FORMAT_TIMER
@@ -178,38 +192,47 @@ export default function Timer({
             <span
               role="progressbar"
               aria-labelledby="ProgressLabel"
-              className="block rounded-full bg-gray-200 my-2"
+              className={clsx(
+                "block rounded-full my-2",
+                {
+                  "bg-gray-200": timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING,
+                  "bg-sunset": timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING
+                    && sessionSate === SESSION_STARTED
+                }
+              )}
             >
               <span
-                className="block h-3 rounded-full bg-indigo-600"
+                className="block h-3 rounded-full bg-gunmetal"
                 style={{ width: restingProgress + "%" }}
               ></span>
             </span>
 
-            <span className="ml-1">
-              {timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING ? (
-                <span className="inline-flex items-center justify-center rounded-full bg-orange-100 px-2.5 py-0.5 text-orange-700">
-                  <FontAwesomeIcon icon={faDumbbell} size="lg" />
+            <span className="ml-1 mt-1.5 inline-block">
+              <span className={clsx(
+                'inline-flex items-center justify-center rounded-full px-2.5 py-0.5',
+                timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING && 'bg-orange-100 text-orange-700',
+                timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING && 'bg-blue-100 text-blue-700',
+                sessionSate !== SESSION_STARTED && 'hidden'
+              )}>
+                  <FontAwesomeIcon icon={timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING ? faDumbbell : faHourglass} size="lg" />
                   <p className="whitespace-nowrap ml-1 text-sm">
                     {timerActivityStatus}
                   </p>
                 </span>
-              ) : (
-                <span className="inline-flex items-center justify-center rounded-full bg-blue-100 px-2.5 py-0.5 text-blue-700">
-                  <FontAwesomeIcon icon={faHourglass} size="lg" />
-                  <p className="whitespace-nowrap ml-1 text-sm">
-                    {timerActivityStatus}
-                  </p>
-                </span>
-              )}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="w-fit my-2 row-span-2 col-span-4 row-start-3 md:col-span-2 md:row-start-2">
+      <div className="w-fit my-2 md:mx-2 row-span-2 col-span-4 row-start-3 md:col-span-2 md:row-start-2">
         <Goal></Goal>
-        <SetsTable setsHistoryRef={setsHistoryRef} sessionSate={sessionSate} timerActivityStatus={timerActivityStatus} timerSeconds={timerStateMs} readOnly={readOnly}></SetsTable>
+        <SetsTable
+          setsHistoryRef={setsHistoryRef}
+          sessionSate={sessionSate}
+          timerActivityStatus={timerActivityStatus}
+          timerSeconds={timerStateMs}
+          readOnly={readOnly}
+        ></SetsTable>
       </div>
     </>
   );
