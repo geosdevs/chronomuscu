@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-import ExerciseBoardList from './components/ExerciseBoardList';
-import AppMenu from './AppMenu';
-import { exerciseBoardsData } from './components/ExerciseBoard/setsData';
-import { getLastItem } from './helpers/functions';
+import { useEffect, useState } from "react";
+import "./App.css";
+import ExerciseBoardList from "./components/ExerciseBoardList";
+import AppMenu, { MENU_POSITION_BOTTOM, MENU_POSITION_LEFT } from "./AppMenu";
+import { exerciseBoardsData } from "./components/ExerciseBoard/setsData";
+import { getLastItem } from "./helpers/functions";
 
 export type ExerciseBoardData = {
-  id: number
-  exerciseName: string
-}
+  id: number;
+  exerciseName: string;
+};
 
 function App() {
   const [exerciseBoards, setExerciseBoards] = useState<ExerciseBoardData[]>([]);
@@ -16,10 +16,12 @@ function App() {
 
   // todo: fetch user data
   useEffect(() => {
-    setExerciseBoards([{
-      id: 1,
-      exerciseName: "First exercise"
-    }]);
+    setExerciseBoards([
+      {
+        id: 1,
+        exerciseName: "First exercise",
+      },
+    ]);
   }, []);
 
   function handleExerciseBoardSelection(exerciseBoardId: number) {
@@ -34,8 +36,8 @@ function App() {
       ...exerciseBoards,
       {
         id: nextId,
-        exerciseName: "New Exercise"
-      }
+        exerciseName: "New Exercise",
+      },
     ]);
     setActiveBoardId(nextId);
   }
@@ -49,12 +51,25 @@ function App() {
       <header className="App-header">
         <h1>Chronomuscu</h1>
       </header>
-      <nav className='fixed bg-gunmetal'>
-        <AppMenu activeBoardId={activeBoardId} exerciseBoards={exerciseBoards} onExerciseBoardSelection={handleExerciseBoardSelection}></AppMenu>
-      </nav>
-      <section className='pl-12 md:pl-16 bg-zinc-100 h-full'>
-        <ExerciseBoardList exerciseBoards={exerciseBoards} activeBoardId={activeBoardId} onNextExerciseClick={handleNextExerciseClick}></ExerciseBoardList>
+      <AppMenu
+        activeBoardId={activeBoardId}
+        exerciseBoards={exerciseBoards}
+        onExerciseBoardSelection={handleExerciseBoardSelection}
+        position={MENU_POSITION_LEFT}
+      ></AppMenu>
+      <section className="md:pl-12 md:pl-16 bg-zinc-100 h-full">
+        <ExerciseBoardList
+          exerciseBoards={exerciseBoards}
+          activeBoardId={activeBoardId}
+          onNextExerciseClick={handleNextExerciseClick}
+        ></ExerciseBoardList>
       </section>
+      <AppMenu
+        activeBoardId={activeBoardId}
+        exerciseBoards={exerciseBoards}
+        onExerciseBoardSelection={handleExerciseBoardSelection}
+        position={MENU_POSITION_BOTTOM}
+      ></AppMenu>
     </div>
   );
 }

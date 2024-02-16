@@ -10,7 +10,12 @@ import {
   SESSION_STOPPED,
 } from "../ExerciseBoard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDumbbell, faHourglass } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDumbbell,
+  faHourglass,
+  faPause,
+  faStop,
+} from "@fortawesome/free-solid-svg-icons";
 import Goal from "../Goal";
 import SetsTable from "./SetsTable";
 import {
@@ -153,25 +158,32 @@ export default function Timer({
     }
   }
 
+  function isExercising() {
+    return timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING;
+  }
+
+  function isResting() {
+    return timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING;
+  }
+
+  function sessionStarted() {
+    return sessionSate === SESSION_STARTED;
+  }
+
+  function sessionStopped() {
+    return sessionSate === SESSION_STOPPED;
+  }
+
+  function sessionPaused() {
+    return sessionSate === SESSION_PAUSED;
+  }
+
   return (
     <>
       <div className="row-span-1 col-span-4 row-start-1 w-100">
         <div className="flex rounded-xl bg-white p-4 ring ring-indigo-50 sm:p-6 lg:p-8">
-          <PlayToolbar
-            onPlayClick={(playPauseBtnState) => {
-              handlePlay();
-            }}
-            onPauseClick={(playPauseBtnState) => {
-              handlePause();
-            }}
-            onStopClick={() => {
-              handleStop();
-            }}
-            sessionSate={sessionSate}
-            readonly={readOnly}
-          ></PlayToolbar>
-
           <div className="my-2 w-4/5">
+            {/* SECONDS */}
             <div className="text-center">
               {[SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) ? (
                 <span className="font-bold text-5xl text-frenchgray">
@@ -189,17 +201,15 @@ export default function Timer({
                 </span>
               )}
             </div>
+
+            {/* PROGRESS BAR */}
             <span
               role="progressbar"
               aria-labelledby="ProgressLabel"
-              className={clsx(
-                "block rounded-full my-2",
-                {
-                  "bg-gray-200": timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING,
-                  "bg-sunset": timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING
-                    && sessionSate === SESSION_STARTED
-                }
-              )}
+              className={clsx("block rounded-full my-2", {
+                "bg-gray-200": isResting() || sessionStopped() || sessionPaused(),
+                "bg-sunset": isExercising() && sessionStarted(),
+              })}
             >
               <span
                 className="block h-3 rounded-full bg-gunmetal"
@@ -207,20 +217,51 @@ export default function Timer({
               ></span>
             </span>
 
+            {/* ACTIVITY STATUS BADGE */}
             <span className="ml-1 mt-1.5 inline-block">
-              <span className={clsx(
-                'inline-flex items-center justify-center rounded-full px-2.5 py-0.5',
-                timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING && 'bg-orange-100 text-orange-700',
-                timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING && 'bg-blue-100 text-blue-700',
-                sessionSate !== SESSION_STARTED && 'hidden'
-              )}>
-                  <FontAwesomeIcon icon={timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING ? faDumbbell : faHourglass} size="lg" />
-                  <p className="whitespace-nowrap ml-1 text-sm">
-                    {timerActivityStatus}
-                  </p>
-                </span>
+              <span
+                className={clsx(
+                  "inline-flex items-center justify-center rounded-full px-2.5 py-0.5",
+                  sessionStarted() && isExercising() && "bg-orange-100 text-orange-700",
+                  sessionStarted() && isResting() && "bg-blue-100 text-blue-700",
+                  sessionStopped() && "bg-gunmetal text-frenchgray",
+                  sessionPaused() && "bg-frenchgray text-gunmetal",
+                )}
+              >
+                {sessionStarted() && isExercising() && (
+                  <FontAwesomeIcon icon={faDumbbell} size="lg" />
+                )}
+                {sessionStarted() && isResting() && (
+                  <FontAwesomeIcon icon={faHourglass} size="lg" />
+                )}
+                {sessionStopped() && (
+                  <FontAwesomeIcon icon={faStop} size="lg" />
+                )}
+                {sessionPaused() && (
+                  <FontAwesomeIcon icon={faPause} size="lg" />
+                )}
+                <p className="whitespace-nowrap ml-1 text-sm">
+                  {sessionStarted() && timerActivityStatus}
+                  {sessionStopped() && 'Stopped'}
+                  {sessionPaused() && 'Paused'}
+                </p>
+              </span>
             </span>
           </div>
+
+          <PlayToolbar
+            onPlayClick={(playPauseBtnState) => {
+              handlePlay();
+            }}
+            onPauseClick={(playPauseBtnState) => {
+              handlePause();
+            }}
+            onStopClick={() => {
+              handleStop();
+            }}
+            sessionSate={sessionSate}
+            readonly={readOnly}
+          ></PlayToolbar>
         </div>
       </div>
 

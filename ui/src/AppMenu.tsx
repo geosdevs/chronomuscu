@@ -10,29 +10,56 @@ import { getLastItem } from "./helpers/functions";
 import clsx from "clsx";
 
 type AppMenuProps = {
-  exerciseBoards: ExerciseBoardData[]
-  onExerciseBoardSelection: Function
-  activeBoardId: number
+  exerciseBoards: ExerciseBoardData[];
+  onExerciseBoardSelection: Function;
+  activeBoardId: number;
+  position: typeof MENU_POSITION_LEFT | typeof MENU_POSITION_BOTTOM;
 };
+
+export const MENU_POSITION_LEFT = "left";
+export const MENU_POSITION_BOTTOM = "bottom";
 
 export default function AppMenu({
   exerciseBoards,
   onExerciseBoardSelection,
-  activeBoardId
+  activeBoardId,
+  position,
 }: AppMenuProps) {
   let exerciseBoardInc = 1;
-  const lastExerciseBoardId = getLastItem<ExerciseBoardData>(exerciseBoards)?.id ?? 0;
+  const lastExerciseBoardId =
+    getLastItem<ExerciseBoardData>(exerciseBoards)?.id ?? 0;
+  
+  function isMenuBottom() {
+    return position === MENU_POSITION_BOTTOM;
+  }
+
+  function isMenuLeft() {
+    return position === MENU_POSITION_LEFT;
+  }
 
   return (
-    <div className="flex h-screen w-12 md:w-16 flex-col justify-between">
-      <div>
+    <nav className={clsx(
+      isMenuLeft() && 'fixed bg-gunmetal hidden md:block',
+      isMenuBottom() && 'fixed bg-gunmetal md:hidden bottom-0 w-full',
+    )}>
+      <div
+        className={clsx(
+          "inline-flex justify-start",
+          isMenuLeft() && "flex-col w-12 md:w-16 h-screen",
+          isMenuBottom() && "flex-row"
+        )}
+      >
         <div className="inline-flex size-12 md:size-16 items-center justify-center">
           <span className="grid size-8 md:size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
             G
           </span>
         </div>
 
-        <ul className="space-y-1 border-t border-frenchgray py-2">
+        <ul className={clsx(
+          'space-y-1 border-t border-frenchgray py-2 inline-flex',
+          isMenuLeft() && "flex-col",
+          isMenuBottom() && "flex-row"
+        )}>
           <li>
             <a
               href="/"
@@ -73,17 +100,29 @@ export default function AppMenu({
         </ul>
 
         <div className="border-t border-gray-100">
-          <ul className="space-y-1 border-t border-gray-100">
+          <ul className={clsx(
+            'space-y-1 border-t border-gray-100',
+            isMenuLeft() && 'flex flex-col',
+            isMenuBottom() && 'inline-flex flex-row w-[80vw] overflow-x-auto'
+          )}>
             {exerciseBoards.map((exerciseBoard) => (
-              <li key={`app-menu-exercise-board-${exerciseBoard.id}`} style={{marginTop: 0}}>
+              <li
+                key={`app-menu-exercise-board-${exerciseBoard.id}`}
+                style={{ marginTop: 0 }}
+              >
                 <a
                   href="/"
                   className={clsx(
-                    'group relative flex justify-center px-2 py-1.5 py-3 hover:bg-eerieblack hover:text-chinarose',
-                    activeBoardId === exerciseBoard.id && 'bg-eerieblack text-chinarose',
-                    activeBoardId !== exerciseBoard.id && 'text-frenchgray',
-                    exerciseBoard.id === lastExerciseBoardId && activeBoardId !== exerciseBoard.id && 'text-sunset',
-                    exerciseBoard.id === lastExerciseBoardId && activeBoardId === exerciseBoard.id && 'bg-eerieblack text-chinarose'
+                    "group relative flex justify-center px-2 py-1.5 py-3 hover:bg-eerieblack hover:text-chinarose",
+                    activeBoardId === exerciseBoard.id &&
+                      "bg-eerieblack text-chinarose",
+                    activeBoardId !== exerciseBoard.id && "text-frenchgray",
+                    exerciseBoard.id === lastExerciseBoardId &&
+                      activeBoardId !== exerciseBoard.id &&
+                      "text-sunset",
+                    exerciseBoard.id === lastExerciseBoardId &&
+                      activeBoardId === exerciseBoard.id &&
+                      "bg-eerieblack text-chinarose"
                   )}
                   onClick={(e) => {
                     e.preventDefault();
@@ -92,15 +131,17 @@ export default function AppMenu({
                 >
                   <FontAwesomeIcon icon={faDumbbell} />
                   <span className="ml-1">{exerciseBoardInc++}</span>
-                  <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                  {isMenuLeft() && (
+                    <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
                     {exerciseBoard.exerciseName}
                   </span>
+                  )}
                 </a>
               </li>
             ))}
           </ul>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
