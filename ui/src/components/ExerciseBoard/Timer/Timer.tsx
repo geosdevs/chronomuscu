@@ -9,13 +9,6 @@ import {
   SESSION_STARTED,
   SESSION_STOPPED,
 } from "../ExerciseBoard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDumbbell,
-  faHourglass,
-  faPause,
-  faStop,
-} from "@fortawesome/free-solid-svg-icons";
 import Goal from "../Goal";
 import SetsTable from "./SetsTable";
 import {
@@ -24,6 +17,8 @@ import {
   TimerActivityStatus,
 } from "../../../app-types";
 import clsx from "clsx";
+import TimerActivityBadge from "./TimerActivityBadge";
+import { isExercising, isResting, sessionPaused, sessionStarted, sessionStopped } from "../../../helpers/functions";
 
 export const TIME_INTERVAL_MS = 1000;
 
@@ -59,6 +54,11 @@ export default function Timer({
   );
   const refTimerId = useRef<NodeJS.Timer | null>(null);
   let restingProgress = 0;
+  const _isResting = isResting.bind(null, timerActivityStatus);
+  const _isExercising = isExercising.bind(null, timerActivityStatus);
+  const _sessionStopped = sessionStopped.bind(null, sessionSate);
+  const _sessionPaused = sessionPaused.bind(null, sessionSate);
+  const _sessionStarted = sessionStarted.bind(null, sessionSate);
 
   if (
     prevRestingTimerMs > 0 &&
@@ -158,26 +158,6 @@ export default function Timer({
     }
   }
 
-  function isExercising() {
-    return timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING;
-  }
-
-  function isResting() {
-    return timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING;
-  }
-
-  function sessionStarted() {
-    return sessionSate === SESSION_STARTED;
-  }
-
-  function sessionStopped() {
-    return sessionSate === SESSION_STOPPED;
-  }
-
-  function sessionPaused() {
-    return sessionSate === SESSION_PAUSED;
-  }
-
   return (
     <>
       <div className="row-span-1 col-span-4 row-start-1 w-100">
@@ -207,46 +187,23 @@ export default function Timer({
               role="progressbar"
               aria-labelledby="ProgressLabel"
               className={clsx("block rounded-full my-2", {
-                "bg-gray-200": isResting() || sessionStopped() || sessionPaused(),
-                "bg-sunset": isExercising() && sessionStarted(),
+                "bg-gray-200": _isResting() || _sessionStopped() || _sessionPaused(),
+                "bg-sunset": _isExercising() && _sessionStarted(),
               })}
             >
               <span
-                className="block h-3 rounded-full bg-gunmetal"
+                className={clsx(
+                  "block h-3 rounded-full bg-gunmetal",
+                  _isResting() && "bg-bluemunsell"
+                )}
                 style={{ width: restingProgress + "%" }}
               ></span>
             </span>
 
             {/* ACTIVITY STATUS BADGE */}
-            <span className="ml-1 mt-1.5 inline-block">
-              <span
-                className={clsx(
-                  "inline-flex items-center justify-center rounded-full px-2.5 py-0.5",
-                  sessionStarted() && isExercising() && "bg-orange-100 text-orange-700",
-                  sessionStarted() && isResting() && "bg-blue-100 text-blue-700",
-                  sessionStopped() && "bg-gunmetal text-frenchgray",
-                  sessionPaused() && "bg-frenchgray text-gunmetal",
-                )}
-              >
-                {sessionStarted() && isExercising() && (
-                  <FontAwesomeIcon icon={faDumbbell} size="lg" />
-                )}
-                {sessionStarted() && isResting() && (
-                  <FontAwesomeIcon icon={faHourglass} size="lg" />
-                )}
-                {sessionStopped() && (
-                  <FontAwesomeIcon icon={faStop} size="lg" />
-                )}
-                {sessionPaused() && (
-                  <FontAwesomeIcon icon={faPause} size="lg" />
-                )}
-                <p className="whitespace-nowrap ml-1 text-sm">
-                  {sessionStarted() && timerActivityStatus}
-                  {sessionStopped() && 'Stopped'}
-                  {sessionPaused() && 'Paused'}
-                </p>
-              </span>
-            </span>
+            <TimerActivityBadge
+              timerActivityStatus={timerActivityStatus}
+              sessionSate={sessionSate}></TimerActivityBadge>
           </div>
 
           <PlayToolbar

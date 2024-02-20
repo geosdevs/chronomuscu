@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { SessionStatus } from "../../../app-types";
-import { SESSION_STARTED } from "../ExerciseBoard";
+import { SESSION_PAUSED, SESSION_STARTED } from "../ExerciseBoard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPause, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 import './PlayToolbar.css'
+import clsx from "clsx";
 
 type PlayToolbarProps = {
   onPlayClick: (playPauseBtnState: SessionStatus) => void
@@ -54,8 +55,11 @@ export default function PlayToolbar({
           : <FontAwesomeIcon icon={faPlay} />}
       </button>
       <button
-        disabled={readonly}
-        className="inline-block p-3 text-red-800 hover:bg-gray-50 focus:relative disabled:hidden"
+        disabled={sessionSate !== SESSION_PAUSED}
+        className={clsx(
+          "inline-block p-3 text-chinarose hover:bg-gray-50 focus:relative disabled:text-frenchgray",
+          (readonly || sessionSate === SESSION_STARTED) && "opacity-0"
+        )}
         onClick={() => {
           if (!readonly) {
             setPlayPauseBtnState(PAUSE_BTN_STATE);

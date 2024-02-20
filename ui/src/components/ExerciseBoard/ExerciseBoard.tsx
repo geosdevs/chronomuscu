@@ -16,6 +16,7 @@ import {
   getLastSetHistory,
 } from "./Timer/sets-table-functions";
 import NextExerciseBtn from "./NextExerciseBtn";
+import ExerciseTitle from "./ExerciseTitle";
 
 type ExerciseBoardProps = {
   boardData: ExerciseBoardData;
@@ -54,7 +55,11 @@ export default function ExerciseBoard({
 
   // todo remove tmp effect
   useEffect(() => {
-    setRestTimers([2, 5, 10, 30, 60, 90, 120, 180, 300]);
+    if (sessionStorage.getItem('env') === 'DEV') {
+      setRestTimers([2, 5, 10, 30, 60, 90, 120, 180, 300]);
+    } else {
+      setRestTimers([10, 20, 30, 60, 90, 120, 180, 300]);
+    }
   }, []);
 
   function handleRestBtnClick(timerSeconds: number) {
@@ -90,7 +95,7 @@ export default function ExerciseBoard({
   return (
     <div className={`my-2 p-2 md:pl-4 ${isActive ? "" : "hidden"}`}>
       <div className="flex">
-        <h2 className="text-2xl text-gunmetal">{boardData.exerciseName}</h2>
+        <ExerciseTitle exerciseName={boardData.exerciseName}></ExerciseTitle>
         <NextExerciseBtn
           onNextExerciseClick={onNextExerciseClick}
           setReadOnlyState={setReadOnlyState}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import "./App.css";
 import ExerciseBoardList from "./components/ExerciseBoardList";
 import AppMenu, { MENU_POSITION_BOTTOM, MENU_POSITION_LEFT } from "./AppMenu";
@@ -9,6 +9,8 @@ export type ExerciseBoardData = {
   id: number;
   exerciseName: string;
 };
+
+export const ExerciseBoardOnTitleEditContext = createContext<Function|null>(null);
 
 function App() {
   const [exerciseBoards, setExerciseBoards] = useState<ExerciseBoardData[]>([]);
@@ -42,6 +44,21 @@ function App() {
     setActiveBoardId(nextId);
   }
 
+  function handleExerciseNameChange(newName: string) {
+    if (exerciseBoards.length > 0) {
+      const lastIndex = exerciseBoards.length - 1;
+      const lastExerciseBoardData = exerciseBoards[lastIndex];
+
+      setExerciseBoards([
+        ...exerciseBoards.slice(0, lastIndex),
+        {
+          id: lastExerciseBoardData.id,
+          exerciseName: newName,
+        },
+      ]);
+    }
+  }
+
   if (!activeBoardId && exerciseBoardsData[0]) {
     setActiveBoardId(exerciseBoardsData[0].id);
   }
@@ -58,11 +75,13 @@ function App() {
         position={MENU_POSITION_LEFT}
       ></AppMenu>
       <section className="md:pl-12 md:pl-16 bg-zinc-100 h-full">
-        <ExerciseBoardList
-          exerciseBoards={exerciseBoards}
-          activeBoardId={activeBoardId}
-          onNextExerciseClick={handleNextExerciseClick}
-        ></ExerciseBoardList>
+        <ExerciseBoardOnTitleEditContext.Provider value={handleExerciseNameChange}>
+          <ExerciseBoardList
+            exerciseBoards={exerciseBoards}
+            activeBoardId={activeBoardId}
+            onNextExerciseClick={handleNextExerciseClick}
+            ></ExerciseBoardList>
+        </ExerciseBoardOnTitleEditContext.Provider>
       </section>
       <AppMenu
         activeBoardId={activeBoardId}

@@ -56,17 +56,17 @@ export default function AppMenu({
         </div>
 
         <ul className={clsx(
-          'space-y-1 border-t border-frenchgray py-2 inline-flex',
-          isMenuLeft() && "flex-col",
-          isMenuBottom() && "flex-row"
+          'space-y-1 inline-flex border-frenchgray',
+          isMenuLeft() && "flex-col border-t border-b",
+          isMenuBottom() && "flex-row border-l border-r"
         )}>
           <li>
             <a
               href="/"
-              className="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+              className="h-full group relative flex justify-center px-2 py-3 text-gray-500 hover:bg-eerieblack hover:text-chinarose"
             >
               <FontAwesomeIcon icon={faGear} />
-              <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+              <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
                 Settings
               </span>
             </a>
@@ -75,10 +75,10 @@ export default function AppMenu({
           <li>
             <a
               href="/"
-              className="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+              className="h-full group relative flex justify-center px-2 py-3 text-gray-500 hover:bg-eerieblack hover:text-chinarose"
             >
               <FontAwesomeIcon icon={faUser} />
-              <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+              <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
                 Account
               </span>
             </a>
@@ -88,10 +88,10 @@ export default function AppMenu({
             <form action="/">
               <button
                 type="submit"
-                className="group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                className="h-full group relative flex w-full justify-center px-2 py-3 text-sm text-gray-500 hover:bg-eerieblack hover:text-chinarose"
               >
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />
-                <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
                   Logout
                 </span>
               </button>
@@ -99,9 +99,9 @@ export default function AppMenu({
           </li>
         </ul>
 
-        <div className="border-t border-gray-100">
+        <div className="">
           <ul className={clsx(
-            'space-y-1 border-t border-gray-100',
+            'space-y-1',
             isMenuLeft() && 'flex flex-col',
             isMenuBottom() && 'inline-flex flex-row w-[80vw] overflow-x-auto'
           )}>
