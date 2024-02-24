@@ -2,7 +2,7 @@ import {
   TIMER_ACTIVITY_STATUS_EXERCISING,
   TIMER_ACTIVITY_STATUS_RESTING,
 } from "./Timer";
-import { DialogContentProps } from "./components/ui/Dialog";
+import { DialogContentProps } from "./ui/Dialog";
 
 type SessionStatus =
   | typeof SESSION_STOPPED

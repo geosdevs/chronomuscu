@@ -39,7 +39,7 @@ export default function PlayToolbar({
     <span className="text-3xl play-toolbar-flex inline-flex justify-center overflow-hidden rounded-md bg-white my-2 mx-0 md:mx-4">
       <button
         disabled={readonly}
-        className="mb-1 inline-block p-3 text-gray-700 hover:bg-gray-50 hover:text-ecru duration-300 focus:relative disabled:text-frenchgray"
+        className="mb-1 inline-block p-3 text-gray-700 hover:text-ecru hover:scale-110 duration-300 focus:relative disabled:text-frenchgray"
         onClick={() => {
           if (!readonly) {
             if (getPlayPauseBtnState() === PLAY_BTN_STATE) {
@@ -61,7 +61,7 @@ export default function PlayToolbar({
       <button
         disabled={sessionSate !== SESSION_PAUSED}
         className={clsx(
-          "inline-block p-3 text-chinarose hover:bg-gray-50 hover:text-ecru duration-300 focus:relative disabled:text-frenchgray",
+          "inline-block p-3 text-chinarose enabled:hover:scale-110 hover:text-ecru duration-300 focus:relative disabled:text-frenchgray",
           (readonly || sessionSate === SESSION_STARTED) && "text-frenchgray"
         )}
         onClick={() => {

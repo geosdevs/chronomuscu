@@ -17,9 +17,9 @@ export default function RestBtn({ restSeconds, readOnly }: RestBtnProps) {
     <button
       disabled={readOnly}
       className="m-1 rounded-full text-white 
-        hover:scale-110 hover:bg-ecru hover:text-white
+        enabled:hover:scale-110 hover:bg-ecru hover:text-white
         bg-chinarose py-1 px-2 md:p-3 md:px-3 transition  
-        leading-5 focus:outline-none focus:ring disabled:bg-gray-400"
+        leading-5 focus:outline-none disabled:bg-gray-400"
       onClick={() => {
         if (typeof onRestBtnClick === "function") {
           onRestBtnClick(restSeconds);

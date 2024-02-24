@@ -65,7 +65,7 @@ const Dialog = forwardRef(function (
           From: "opacity-100 translate-y-0 sm:scale-100"
           To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" */}
           <div
-            className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+            className="relative transform overflow-hidden rounded-md bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
@@ -101,7 +101,7 @@ const Dialog = forwardRef(function (
             </div>
             <div className="bg-gray-50 px-6 py-3 flex justify-end sm:px-6">
               <a
-                className="mx-1 inline-flex group relative inline-block text-sm font-semibold text-white hover:text-amaranth-purple focus:outline-none focus:ring active:text-white transition-all duration-300"
+                className="mx-1 inline-flex group relative inline-block text-sm font-semibold text-white hover:text-amaranth-purple focus:outline-none active:text-white transition-all duration-300"
                 href="/"
                 onClick={(e) => {
                   e.preventDefault();
@@ -111,14 +111,14 @@ const Dialog = forwardRef(function (
                   onClose();
                 }}
               >
-                <span className="rounded-lg absolute inset-0 translate-x-0 translate-y-0 bg-amaranth-purple transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"></span>
-                <span className="rounded-lg relative block border border-amaranth-purple bg-amaranth-purple hover:bg-white active:bg-amaranth-purple px-2.5 py-1.5">
+                <span className="rounded-md absolute inset-0 translate-x-0 translate-y-0 bg-amaranth-purple transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"></span>
+                <span className="rounded-md relative block border border-amaranth-purple bg-amaranth-purple hover:bg-white active:bg-amaranth-purple px-2.5 py-1.5">
                   {cancelLabel ?? "Cancel"}
                 </span>
               </a>
 
               <a
-                className="mx-1 inline-flex group relative inline-block text-sm font-semibold text-gunmetal hover:text-eerieblack focus:outline-none focus:ring transition-colors duration-200"
+                className="mx-1 inline-flex group relative inline-block text-sm font-semibold text-gunmetal hover:text-eerieblack focus:outline-none transition-colors duration-200"
                 href="/"
                 onClick={(e) => {
                   e.preventDefault();
@@ -126,8 +126,8 @@ const Dialog = forwardRef(function (
                   onClose();
                 }}
               >
-                <span className="rounded-lg absolute inset-0 translate-x-0 translate-y-0 bg-gray-300 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"></span>
-                <span className="rounded-lg relative block border border-gray-300 hover:border-gray-300 bg-white active:bg-gray-300 px-2.5 py-1.5">
+                <span className="rounded-md absolute inset-0 translate-x-0 translate-y-0 bg-gray-300 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"></span>
+                <span className="rounded-md relative block border border-gray-300 hover:border-gray-300 bg-white active:bg-gray-300 px-2.5 py-1.5">
                   {submitLabel ?? "Submit"}
                 </span>
               </a>

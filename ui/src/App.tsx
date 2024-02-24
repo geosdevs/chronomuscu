@@ -7,17 +7,14 @@ import { getLastItem, missingImplementation } from "./helpers/functions";
 import { useImmer } from "use-immer";
 import { OpenDialogCallback, SessionStatus } from "./app-types";
 import { resetPendingSetsHistoryData } from "./components/ExerciseBoard/Timer/sets-table-functions";
-import Dialog, { DialogContentProps } from "./components/ui/Dialog";
+import Dialog, { DialogContentProps } from "./ui/Dialog";
 
 export type ExerciseBoardData = {
   id: number;
   exerciseName: string;
 };
 
-export type SessionStateContextType = [
-  sessionState: SessionStatus,
-  setSessionState: Function
-];
+export type SessionStateContextType = [sessionState: SessionStatus, setSessionState: Function];
 
 const NEW_EXERCISE_BOARD_DATA: ExerciseBoardData = {
   id: 1,
@@ -31,32 +28,27 @@ export const SESSION_STOPPED = 0;
 export const SESSION_STARTED = 1;
 export const SESSION_PAUSED = 2;
 
-export const ExerciseBoardOnTitleEditContext = createContext<Function>(
-  missingImplementation
-);
+export const ExerciseBoardOnTitleEditContext = createContext<Function>(missingImplementation);
 export const SessionStateContext = createContext<SessionStateContextType>([
   SESSION_STOPPED,
   (param: any) => param,
 ]);
-export const SavePendingExerciseBoardsDataContext = createContext<Function>(
+export const SavePendingExerciseBoardsDataContext = createContext<Function>(missingImplementation);
+export const OpenDialogContext = createContext<OpenDialogCallback | typeof missingImplementation>(
   missingImplementation
 );
-export const OpenDialogContext = createContext<
-  OpenDialogCallback | typeof missingImplementation
->(missingImplementation);
 
 function App() {
   const [exerciseBoards, setExerciseBoards] = useImmer<ExerciseBoardData[]>([]);
   const [activeBoardId, setActiveBoardId] = useState<number>(0);
-  const [sessionSate, setSessionState] =
-    useState<SessionStatus>(SESSION_STOPPED);
-  const [dialogContentProps, setDialogContentProps] =
-    useState<DialogContentProps>({
-      title: "[title]",
-      content: "[content]",
-      onCancelClick: () => true,
-      onSubmitClick: () => true,
-    });
+  const [sessionSate, setSessionState] = useState<SessionStatus>(SESSION_STOPPED);
+  const [lastSessionReset, setLastSessionReset] = useState(Date.now());
+  const [dialogContentProps, setDialogContentProps] = useState<DialogContentProps>({
+    title: "[title]",
+    content: "[content]",
+    onCancelClick: () => true,
+    onSubmitClick: () => true,
+  });
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // todo: fetch user data
@@ -67,19 +59,14 @@ function App() {
       const pendingExerciseBoardStr = localStorage.getItem(PENDING_EXC_KEY);
       pendingExerciseBoardData = JSON.parse(pendingExerciseBoardStr ?? "");
 
-      if (
-        !Array.isArray(pendingExerciseBoardData) ||
-        !pendingExerciseBoardData.length
-      ) {
+      if (!Array.isArray(pendingExerciseBoardData) || !pendingExerciseBoardData.length) {
         throw new Error("Exercise board data init required");
       }
     } catch (exception) {
       console.log("Init exercise boards");
       pendingExerciseBoardData = [NEW_EXERCISE_BOARD_DATA];
     } finally {
-      const lastExerciseBoard = getLastItem<ExerciseBoardData>(
-        pendingExerciseBoardData
-      );
+      const lastExerciseBoard = getLastItem<ExerciseBoardData>(pendingExerciseBoardData);
 
       setExerciseBoards(pendingExerciseBoardData);
 
@@ -111,9 +98,7 @@ function App() {
   }
 
   function handleExerciseNameChange(exerciseBoardId: number, newName: string) {
-    const indexOfExerciseBoard = exerciseBoards.findIndex(
-      (board) => board.id === exerciseBoardId
-    );
+    const indexOfExerciseBoard = exerciseBoards.findIndex((board) => board.id === exerciseBoardId);
 
     if (indexOfExerciseBoard >= 0) {
       setExerciseBoards((draft) => {
@@ -121,19 +106,12 @@ function App() {
         savePendingExerciseBoardsData(draft);
       });
     } else {
-      throw new Error(
-        `ExerciseBoard id "${exerciseBoardId}" does not exists !`
-      );
+      throw new Error(`ExerciseBoard id "${exerciseBoardId}" does not exists !`);
     }
   }
 
-  function savePendingExerciseBoardsData(
-    exerciseBoardsData?: ExerciseBoardData[]
-  ) {
-    localStorage.setItem(
-      PENDING_EXC_KEY,
-      JSON.stringify(exerciseBoardsData ?? exerciseBoards)
-    );
+  function savePendingExerciseBoardsData(exerciseBoardsData?: ExerciseBoardData[]) {
+    localStorage.setItem(PENDING_EXC_KEY, JSON.stringify(exerciseBoardsData ?? exerciseBoards));
   }
 
   function handleSessionReset() {
@@ -141,6 +119,8 @@ function App() {
     setExerciseBoards([NEW_EXERCISE_BOARD_DATA]);
     resetPendingSetsHistoryData();
     setActiveBoardId(1);
+    setSessionState(SESSION_STOPPED);
+    setLastSessionReset(Date.now());
   }
 
   function openDialog(dialogContentProps: DialogContentProps): void {
@@ -155,8 +135,8 @@ function App() {
   return (
     <div className="App flex App-flex h-full">
       <OpenDialogContext.Provider value={openDialog}>
-        <header className="App-header py-2">
-          <h1>Chronomuscu</h1>
+        <header className="App-header h-12 md:h-16">
+          <h1 className="md:py-4">Chronomuscu</h1>
         </header>
         <AppMenu
           activeBoardId={activeBoardId}
@@ -167,10 +147,9 @@ function App() {
         ></AppMenu>
         <section className="md:pl-12 md:pl-16 bg-zinc-100 h-full">
           <SessionStateContext.Provider value={[sessionSate, setSessionState]}>
-            <SavePendingExerciseBoardsDataContext.Provider
-              value={savePendingExerciseBoardsData}
-            >
+            <SavePendingExerciseBoardsDataContext.Provider value={savePendingExerciseBoardsData}>
               <ExerciseBoardList
+                key={`exercise-board-list-${lastSessionReset}`}
                 exerciseBoards={exerciseBoards}
                 activeBoardId={activeBoardId}
                 onNextExerciseClick={handleNextExerciseClick}
