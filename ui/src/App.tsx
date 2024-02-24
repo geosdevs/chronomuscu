@@ -1,12 +1,13 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import "./App.css";
 import ExerciseBoardList from "./components/ExerciseBoardList";
 import AppMenu, { MENU_POSITION_BOTTOM, MENU_POSITION_LEFT } from "./AppMenu";
 import { exerciseBoardsData } from "./components/ExerciseBoard/setsData";
 import { getLastItem, missingImplementation } from "./helpers/functions";
 import { useImmer } from "use-immer";
-import { SessionStatus } from "./app-types";
+import { OpenDialogCallback, SessionStatus } from "./app-types";
 import { resetPendingSetsHistoryData } from "./components/ExerciseBoard/Timer/sets-table-functions";
+import Dialog, { DialogContentProps } from "./components/ui/Dialog";
 
 export type ExerciseBoardData = {
   id: number;
@@ -30,18 +31,33 @@ export const SESSION_STOPPED = 0;
 export const SESSION_STARTED = 1;
 export const SESSION_PAUSED = 2;
 
-export const ExerciseBoardOnTitleEditContext = createContext<Function>(missingImplementation);
+export const ExerciseBoardOnTitleEditContext = createContext<Function>(
+  missingImplementation
+);
 export const SessionStateContext = createContext<SessionStateContextType>([
   SESSION_STOPPED,
   (param: any) => param,
 ]);
-export const SavePendingExerciseBoardsDataContext = createContext<Function>(missingImplementation);
+export const SavePendingExerciseBoardsDataContext = createContext<Function>(
+  missingImplementation
+);
+export const OpenDialogContext = createContext<
+  OpenDialogCallback | typeof missingImplementation
+>(missingImplementation);
 
 function App() {
   const [exerciseBoards, setExerciseBoards] = useImmer<ExerciseBoardData[]>([]);
   const [activeBoardId, setActiveBoardId] = useState<number>(0);
   const [sessionSate, setSessionState] =
     useState<SessionStatus>(SESSION_STOPPED);
+  const [dialogContentProps, setDialogContentProps] =
+    useState<DialogContentProps>({
+      title: "[title]",
+      content: "[content]",
+      onCancelClick: () => true,
+      onSubmitClick: () => true,
+    });
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   // todo: fetch user data
   useEffect(() => {
@@ -124,6 +140,12 @@ function App() {
     localStorage.removeItem(PENDING_EXC_KEY);
     setExerciseBoards([NEW_EXERCISE_BOARD_DATA]);
     resetPendingSetsHistoryData();
+    setActiveBoardId(1);
+  }
+
+  function openDialog(dialogContentProps: DialogContentProps): void {
+    setDialogContentProps(dialogContentProps);
+    dialogRef.current?.showModal();
   }
 
   if (!activeBoardId && exerciseBoardsData[0]) {
@@ -132,37 +154,46 @@ function App() {
 
   return (
     <div className="App flex App-flex h-full">
-      <header className="App-header py-2">
-        <h1>Chronomuscu</h1>
-      </header>
-      <AppMenu
-        activeBoardId={activeBoardId}
-        exerciseBoards={exerciseBoards}
-        onExerciseBoardSelection={handleExerciseBoardSelection}
-        position={MENU_POSITION_LEFT}
-        onSessionReset={handleSessionReset}
-      ></AppMenu>
-      <section className="md:pl-12 md:pl-16 bg-zinc-100 h-full">
-        <SessionStateContext.Provider value={[sessionSate, setSessionState]}>
-          <SavePendingExerciseBoardsDataContext.Provider
-            value={savePendingExerciseBoardsData}
-          >
-            <ExerciseBoardList
-              exerciseBoards={exerciseBoards}
-              activeBoardId={activeBoardId}
-              onNextExerciseClick={handleNextExerciseClick}
-              handleExerciseNameChange={handleExerciseNameChange}
-            ></ExerciseBoardList>
-          </SavePendingExerciseBoardsDataContext.Provider>
-        </SessionStateContext.Provider>
-      </section>
-      <AppMenu
-        activeBoardId={activeBoardId}
-        exerciseBoards={exerciseBoards}
-        onExerciseBoardSelection={handleExerciseBoardSelection}
-        position={MENU_POSITION_BOTTOM}
-        onSessionReset={handleSessionReset}
-      ></AppMenu>
+      <OpenDialogContext.Provider value={openDialog}>
+        <header className="App-header py-2">
+          <h1>Chronomuscu</h1>
+        </header>
+        <AppMenu
+          activeBoardId={activeBoardId}
+          exerciseBoards={exerciseBoards}
+          onExerciseBoardSelection={handleExerciseBoardSelection}
+          position={MENU_POSITION_LEFT}
+          onSessionReset={handleSessionReset}
+        ></AppMenu>
+        <section className="md:pl-12 md:pl-16 bg-zinc-100 h-full">
+          <SessionStateContext.Provider value={[sessionSate, setSessionState]}>
+            <SavePendingExerciseBoardsDataContext.Provider
+              value={savePendingExerciseBoardsData}
+            >
+              <ExerciseBoardList
+                exerciseBoards={exerciseBoards}
+                activeBoardId={activeBoardId}
+                onNextExerciseClick={handleNextExerciseClick}
+                handleExerciseNameChange={handleExerciseNameChange}
+              ></ExerciseBoardList>
+            </SavePendingExerciseBoardsDataContext.Provider>
+          </SessionStateContext.Provider>
+        </section>
+        <AppMenu
+          activeBoardId={activeBoardId}
+          exerciseBoards={exerciseBoards}
+          onExerciseBoardSelection={handleExerciseBoardSelection}
+          position={MENU_POSITION_BOTTOM}
+          onSessionReset={handleSessionReset}
+        ></AppMenu>
+        <Dialog
+          onClose={() => {
+            dialogRef.current?.close();
+          }}
+          contentProps={dialogContentProps}
+          ref={dialogRef}
+        ></Dialog>
+      </OpenDialogContext.Provider>
     </div>
   );
 }

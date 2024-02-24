@@ -6,10 +6,11 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ExerciseBoardData } from "./app-types";
+import { ExerciseBoardData, OpenDialogCallback } from "./app-types";
 import { getLastItem } from "./helpers/functions";
 import clsx from "clsx";
-import { MouseEvent } from "react";
+import { MouseEvent, useContext } from "react";
+import { OpenDialogContext } from "./App";
 
 type AppMenuProps = {
   exerciseBoards: ExerciseBoardData[]
@@ -32,6 +33,7 @@ export default function AppMenu({
   let exerciseBoardInc = 1;
   const lastExerciseBoardId =
     getLastItem<ExerciseBoardData>(exerciseBoards)?.id ?? 0;
+  const openDialogContext = useContext<OpenDialogCallback>(OpenDialogContext);
 
   function isMenuBottom() {
     return position === MENU_POSITION_BOTTOM;
@@ -128,10 +130,19 @@ export default function AppMenu({
           <li>
             <a href="/"
               className="group relative flex justify-center px-2 py-1.5 py-3 hover:bg-eerieblack hover:text-chinarose text-gray-500"
-              onClick={() => {
-                if (typeof onSessionReset === "function") {
-                  onSessionReset();
-                }
+              onClick={(e) => {
+                e.preventDefault();
+                openDialogContext({
+                  title: "Session reset",
+                  content: "Do you want to reset your current session ?",
+                  submitLabel: "Reset",
+                  backdropClose: true,
+                  onSubmitClick: () => {
+                    if (typeof onSessionReset === "function") {
+                      onSessionReset();
+                    }
+                  }
+                });
               }}
               >
               <FontAwesomeIcon icon={faRotateRight} />

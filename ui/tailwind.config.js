@@ -16,6 +16,7 @@ module.exports = {
         bluemunsell: "#1B9AAA",
         "bluemunsell-light": "#EDFBFC",
         chinarose: "#B24C63",
+        "amaranth-purple": "#B32244",
         cordovan: "#8F3D50",
         ochre: "#e98a15",
       },

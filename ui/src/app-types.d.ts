@@ -2,6 +2,7 @@ import {
   TIMER_ACTIVITY_STATUS_EXERCISING,
   TIMER_ACTIVITY_STATUS_RESTING,
 } from "./Timer";
+import { DialogContentProps } from "./components/ui/Dialog";
 
 type SessionStatus =
   | typeof SESSION_STOPPED
@@ -26,3 +27,5 @@ type ExerciseBoardData = {
   id: number
   exerciseName: string
 };
+
+type OpenDialogCallback = (dialogContentProps: DialogContentProps) => void
