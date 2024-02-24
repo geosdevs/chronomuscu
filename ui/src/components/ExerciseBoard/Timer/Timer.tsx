@@ -1,24 +1,34 @@
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import {
+  MutableRefObject,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   SECONDS_FORMAT_TIMER,
   secondsToPrettyString,
 } from "../../../helpers/time";
 import PlayToolbar from "./PlayToolbar";
+import Goal from "../Goal";
+import SetsTable from "./SetsTable";
+import { SetsHistoryData, TimerActivityStatus } from "../../../app-types";
+import clsx from "clsx";
+import TimerActivityBadge from "./TimerActivityBadge";
+import {
+  isExercising,
+  isResting,
+  sessionPaused,
+  sessionStarted,
+  sessionStopped,
+} from "../../../helpers/functions";
 import {
   SESSION_PAUSED,
   SESSION_STARTED,
   SESSION_STOPPED,
-} from "../ExerciseBoard";
-import Goal from "../Goal";
-import SetsTable from "./SetsTable";
-import {
-  SessionStatus,
-  SetsHistoryData,
-  TimerActivityStatus,
-} from "../../../app-types";
-import clsx from "clsx";
-import TimerActivityBadge from "./TimerActivityBadge";
-import { isExercising, isResting, sessionPaused, sessionStarted, sessionStopped } from "../../../helpers/functions";
+  SavePendingExerciseBoardsDataContext,
+  SessionStateContext,
+} from "../../../App";
 
 export const TIME_INTERVAL_MS = 1000;
 
@@ -29,12 +39,12 @@ type TimerProps = {
   timerInitSeconds: number;
   timerActivityStatus: TimerActivityStatus;
   setTimerActivityStatusExercising: Function;
-  sessionSate: SessionStatus;
-  setSessionState: Function;
-  prevRestingTimerMs: number;
-  setPrevRestingTimerMs: Function;
+  chosenRestingTimerMs: number;
+  setChosenRestingTimerMs: Function;
   setsHistoryRef: MutableRefObject<SetsHistoryData[]>;
   readOnly: boolean;
+  // todo use typeof savePendingSetsHistoryData
+  savePendingSetsHistoryData: Function;
   children?: React.ReactNode;
 };
 
@@ -42,15 +52,18 @@ export default function Timer({
   timerInitSeconds,
   timerActivityStatus,
   setTimerActivityStatusExercising,
-  sessionSate,
-  setSessionState,
-  prevRestingTimerMs,
-  setPrevRestingTimerMs,
+  chosenRestingTimerMs,
+  setChosenRestingTimerMs,
   setsHistoryRef,
   readOnly,
+  savePendingSetsHistoryData,
 }: TimerProps) {
   const [timerStateMs, setTimerStateMs] = useState<number>(
-    getTimerInitValueMs(timerInitSeconds, timerActivityStatus)
+    getTimerInitValueMs()
+  );
+  const [sessionSate, setSessionState] = useContext(SessionStateContext);
+  const savePendingExerciseBoardsData = useContext(
+    SavePendingExerciseBoardsDataContext
   );
   const refTimerId = useRef<NodeJS.Timer | null>(null);
   let restingProgress = 0;
@@ -61,53 +74,67 @@ export default function Timer({
   const _sessionStarted = sessionStarted.bind(null, sessionSate);
 
   if (
-    prevRestingTimerMs > 0 &&
+    chosenRestingTimerMs > 0 &&
     timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING
   ) {
-    restingProgress = (timerStateMs / prevRestingTimerMs) * 100;
+    restingProgress = (timerStateMs / chosenRestingTimerMs) * 100;
   }
 
   useEffect(() => {
-    switch (sessionSate) {
-      case SESSION_STARTED:
-        if (!refTimerId.current) {
-          refTimerId.current = setInterval(() => {
-            setTimerStateMs((prevTimerMs) => {
-              let timerMs = prevTimerMs;
+    if (!readOnly) {
+      switch (sessionSate) {
+        case SESSION_STARTED:
+          if (!refTimerId.current) {
+            refTimerId.current = setInterval(() => {
+              setTimerStateMs((prevTimerMs) => {
+                let timerMs = prevTimerMs;
 
-              if (timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING) {
-                timerMs += TIME_INTERVAL_MS;
-              } else if (
-                timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING
-              ) {
-                timerMs -= TIME_INTERVAL_MS;
-              } else {
-                throw new Error("Unknown activity status");
-              }
+                if (timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING) {
+                  timerMs += TIME_INTERVAL_MS;
+                } else if (
+                  timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING
+                ) {
+                  timerMs -= TIME_INTERVAL_MS;
+                } else {
+                  throw new Error("Unknown activity status");
+                }
 
-              return timerMs;
-            });
-          }, TIME_INTERVAL_MS);
-        }
-        break;
-      case SESSION_STOPPED:
-      case SESSION_PAUSED:
-        clearTimer();
-        break;
-      default:
-        throw new Error("Unknown SESSION_STATUS");
+                return timerMs;
+              });
+            }, TIME_INTERVAL_MS);
+          }
+          break;
+        case SESSION_STOPPED:
+        case SESSION_PAUSED:
+          clearTimer();
+          break;
+        default:
+          throw new Error("Unknown SESSION_STATUS");
+      }
     }
 
     return () => {
       clearTimer();
     };
-  }, [sessionSate, timerActivityStatus]);
+  }, [readOnly, sessionSate, timerActivityStatus]);
 
   useEffect(() => {
     if (timerStateMs === 0) {
       setTimerActivityStatusExercising();
+      savePendingExerciseBoardsData();
     }
-  }, [timerStateMs, setTimerActivityStatusExercising]);
+
+    if (sessionSate === SESSION_STARTED) {
+      savePendingSetsHistoryData(setsHistoryRef.current);
+    }
+  }, [
+    timerStateMs,
+    setTimerActivityStatusExercising,
+    savePendingExerciseBoardsData,
+    savePendingSetsHistoryData,
+    sessionSate,
+    setsHistoryRef,
+  ]);
 
   useEffect(() => {
     if (readOnly && refTimerId.current !== null) {
@@ -115,13 +142,10 @@ export default function Timer({
     }
   });
 
-  function getTimerInitValueMs(
-    wantedAmount: number,
-    timerActivityStatus: TimerActivityStatus
-  ) {
-    return timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING
-      ? 0
-      : wantedAmount * TIME_INTERVAL_MS;
+  function getTimerInitValueMs() {
+    return timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING
+      ? chosenRestingTimerMs
+      : timerInitSeconds * TIME_INTERVAL_MS;
   }
 
   function handlePlay() {
@@ -134,6 +158,7 @@ export default function Timer({
     if (!readOnly) {
       clearTimer();
       setSessionState(SESSION_PAUSED);
+      savePendingExerciseBoardsData();
     }
   }
 
@@ -145,7 +170,7 @@ export default function Timer({
 
   function stopTimer() {
     setTimerStateMs(0);
-    setPrevRestingTimerMs(0);
+    setChosenRestingTimerMs(0);
     clearTimer();
     setTimerActivityStatusExercising();
     setSessionState(SESSION_STOPPED);
@@ -165,21 +190,19 @@ export default function Timer({
           <div className="my-2 w-4/5">
             {/* SECONDS */}
             <div className="text-center">
-              {[SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) ? (
-                <span className="font-bold text-5xl text-frenchgray">
-                  {secondsToPrettyString(
-                    timerStateMs / 1000,
-                    SECONDS_FORMAT_TIMER
-                  )}
-                </span>
-              ) : (
-                <span className="font-bold text-5xl">
-                  {secondsToPrettyString(
-                    timerStateMs / 1000,
-                    SECONDS_FORMAT_TIMER
-                  )}
-                </span>
-              )}
+              <span
+                className={clsx(
+                  "font-bold text-5xl",
+                  [SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) &&
+                    "text-frenchgray",
+                  SESSION_STARTED === sessionSate && "text-darkbrown"
+                )}
+              >
+                {secondsToPrettyString(
+                  timerStateMs / 1000,
+                  SECONDS_FORMAT_TIMER
+                )}
+              </span>
             </div>
 
             {/* PROGRESS BAR */}
@@ -187,14 +210,18 @@ export default function Timer({
               role="progressbar"
               aria-labelledby="ProgressLabel"
               className={clsx("block rounded-full my-2", {
-                "bg-gray-200": _isResting() || _sessionStopped() || _sessionPaused(),
-                "bg-sunset": _isExercising() && _sessionStarted(),
+                "bg-gray-200":
+                  readOnly ||
+                  _isResting() ||
+                  _sessionStopped() ||
+                  _sessionPaused(),
+                "bg-sunset": !readOnly && _isExercising() && _sessionStarted(),
               })}
             >
               <span
                 className={clsx(
-                  "block h-3 rounded-full bg-gunmetal",
-                  _isResting() && "bg-bluemunsell"
+                  "block h-3 rounded-full",
+                  _isResting() && "bg-charcoal"
                 )}
                 style={{ width: restingProgress + "%" }}
               ></span>
@@ -203,19 +230,14 @@ export default function Timer({
             {/* ACTIVITY STATUS BADGE */}
             <TimerActivityBadge
               timerActivityStatus={timerActivityStatus}
-              sessionSate={sessionSate}></TimerActivityBadge>
+              readOnly={readOnly}
+            ></TimerActivityBadge>
           </div>
 
           <PlayToolbar
-            onPlayClick={(playPauseBtnState) => {
-              handlePlay();
-            }}
-            onPauseClick={(playPauseBtnState) => {
-              handlePause();
-            }}
-            onStopClick={() => {
-              handleStop();
-            }}
+            onPlayClick={handlePlay}
+            onPauseClick={handlePause}
+            onStopClick={handleStop}
             sessionSate={sessionSate}
             readonly={readOnly}
           ></PlayToolbar>
@@ -226,7 +248,6 @@ export default function Timer({
         <Goal></Goal>
         <SetsTable
           setsHistoryRef={setsHistoryRef}
-          sessionSate={sessionSate}
           timerActivityStatus={timerActivityStatus}
           timerSeconds={timerStateMs}
           readOnly={readOnly}

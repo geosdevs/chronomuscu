@@ -1,26 +1,43 @@
-import { ExerciseBoardData } from "../App";
+import { useMemo } from "react";
+import { ExerciseBoardData, ExerciseBoardOnTitleEditContext } from "../App";
+import { getLastItem } from "../helpers/functions";
 import ExerciseBoard from "./ExerciseBoard/ExerciseBoard";
 
 type ExerciseBoardListProps = {
-  exerciseBoards: ExerciseBoardData[]
-  activeBoardId: number
-  onNextExerciseClick: Function
+  exerciseBoards: ExerciseBoardData[];
+  activeBoardId: number;
+  onNextExerciseClick: Function;
+  handleExerciseNameChange: Function;
 };
 
 export default function ExerciseBoardList({
   exerciseBoards,
   activeBoardId,
-  onNextExerciseClick
+  onNextExerciseClick,
+  handleExerciseNameChange,
 }: ExerciseBoardListProps) {
+  const lastBoard = useMemo(
+    () => getLastItem<ExerciseBoardData>(exerciseBoards),
+    [exerciseBoards]
+  );
+
   return (
     <>
       {exerciseBoards.map((exerciseBoard) => (
-        <ExerciseBoard
+        <ExerciseBoardOnTitleEditContext.Provider
           key={`exercise-board-${exerciseBoard.id}`}
-          isActive={activeBoardId === exerciseBoard.id}
-          boardData={exerciseBoard}
-          onNextExerciseClick={onNextExerciseClick}
-        ></ExerciseBoard>
+          value={handleExerciseNameChange.bind(null, exerciseBoard.id)}
+        >
+          <div
+            className={activeBoardId === exerciseBoard.id ? "block" : "hidden"}
+          >
+            <ExerciseBoard
+              boardData={exerciseBoard}
+              lastBoardId={lastBoard?.id ?? -1}
+              onNextExerciseClick={onNextExerciseClick}
+            ></ExerciseBoard>
+          </div>
+        </ExerciseBoardOnTitleEditContext.Provider>
       ))}
     </>
   );

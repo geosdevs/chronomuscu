@@ -2,13 +2,11 @@ import { faForward } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type NextExerciseBtnProps = {
-  onNextExerciseClick: Function;
-  setReadOnlyState: Function;
+  onNextExerciseClick: Function
 };
 
 export default function NextExerciseBtn({
   onNextExerciseClick,
-  setReadOnlyState,
 }: NextExerciseBtnProps) {
   return (
     <a
@@ -17,11 +15,9 @@ export default function NextExerciseBtn({
       onClick={(e) => {
         e.preventDefault();
         onNextExerciseClick();
-        setReadOnlyState(true);
       }}
     >
       <span className="rounded-lg absolute inset-0 translate-x-0 translate-y-0 bg-ecru transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"></span>
-
       <span className="rounded-lg relative block border border-chinarose hover:border-current bg-white px-2.5 py-1.5">
         {" "}
         Next <FontAwesomeIcon icon={faForward} />{" "}

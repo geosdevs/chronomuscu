@@ -8,24 +8,22 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import {
-  SessionStatus,
   SetsHistoryData,
   TimerActivityStatus,
 } from "../../../app-types";
 import { TIMER_ACTIVITY_STATUS_EXERCISING, TIME_INTERVAL_MS } from "./Timer";
 import {
   ExerciseBoardSetsHistoryRemoveContext,
-  SESSION_STARTED,
 } from "../ExerciseBoard";
 import {
   getCurrentSetHistory,
   getNextSetHistoryId,
 } from "./sets-table-functions";
 import clsx from "clsx";
+import { SESSION_STARTED, SessionStateContext } from "../../../App";
 
 type SetsTableProps = {
   setsHistoryRef: MutableRefObject<SetsHistoryData[]>;
-  sessionSate: SessionStatus;
   timerActivityStatus: TimerActivityStatus;
   timerSeconds: number;
   readOnly: boolean;
@@ -34,24 +32,24 @@ type SetsTableProps = {
 
 export default function SetsTable({
   setsHistoryRef,
-  sessionSate,
   timerActivityStatus,
   timerSeconds,
   readOnly,
 }: SetsTableProps) {
   let rowInc = 1;
   const onSetHistoryRemove = useContext(ExerciseBoardSetsHistoryRemoveContext);
+  const sessionSate = useContext(SessionStateContext)[0];
 
   function handleSetsHistory() {
     if (
       sessionSate === SESSION_STARTED &&
       timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING
     ) {
-      const currentSetHistory = getCurrentSetHistory(setsHistoryRef);
+      const currentSetHistory = getCurrentSetHistory(setsHistoryRef.current);
 
       if (!currentSetHistory) {
         setsHistoryRef.current.push({
-          id: getNextSetHistoryId(setsHistoryRef),
+          id: getNextSetHistoryId(setsHistoryRef.current),
           activitySeconds: timerSeconds / TIME_INTERVAL_MS,
           restSeconds: 0,
         });
@@ -84,7 +82,7 @@ export default function SetsTable({
                     {secondsToPrettyString(row.activitySeconds)}
                   </p>
                 </span>
-                <span className="align-middle mx-2 my-1 inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-bluemunsell">
+                <span className="align-middle mx-2 my-1 inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-charcoal">
                   {row.restSeconds > 0 ? (
                     <>
                       <FontAwesomeIcon icon={faHourglass} size="sm" />
@@ -101,7 +99,7 @@ export default function SetsTable({
                 <button
                   disabled={readOnly}
                   className={clsx(
-                    "leading-8 disabled:hidden text-chinarose hover:text-ecru hover:scale-125 transform ease-in-out duration-300",
+                    "font-bold leading-9 disabled:hidden text-eerieblack hover:text-ecru hover:scale-125 ease-in-out duration-300",
                     index === setsHistoryRef.current.length - 1 && "hidden"
                   )}
                   onClick={() => {

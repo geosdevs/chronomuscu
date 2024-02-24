@@ -1,5 +1,5 @@
 import { SessionStatus, TimerActivityStatus } from "../app-types";
-import { SESSION_PAUSED, SESSION_STARTED, SESSION_STOPPED } from "../components/ExerciseBoard/ExerciseBoard";
+import { SESSION_PAUSED, SESSION_STARTED, SESSION_STOPPED } from "../App";
 import { TIMER_ACTIVITY_STATUS_EXERCISING, TIMER_ACTIVITY_STATUS_RESTING } from "../components/ExerciseBoard/Timer/Timer";
 
 export function getLastItem<T>(array: Array<T>): T|null {
@@ -24,4 +24,8 @@ export function sessionStopped(sessionSate: SessionStatus) {
 
 export function sessionPaused(sessionSate: SessionStatus) {
   return sessionSate === SESSION_PAUSED;
+}
+
+export function missingImplementation() {
+  throw new Error("Missing implementation");
 }

@@ -14,10 +14,16 @@ export default function RestBtnGroup(props: RestBoardProps) {
   };
 
   return (
-    <div className={`flex ${flexDirection[flexDirectionProp]} md:flex-wrap md:w-fit`}>
+    <div
+      className={`flex ${flexDirection[flexDirectionProp]} md:flex-wrap md:w-fit`}
+    >
       {props.restTimers.map((restTimer) => (
-        <RestBtn key={`rest-seconds-${restTimer}`} restSeconds={restTimer} readOnly={props.readOnly}></RestBtn>
-        ))}
+        <RestBtn
+          key={`rest-seconds-${restTimer}`}
+          restSeconds={restTimer}
+          readOnly={props.readOnly}
+        ></RestBtn>
+      ))}
     </div>
   );
 }

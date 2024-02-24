@@ -6,7 +6,7 @@ describe("render exercise board", () => {
     render(
       <ExerciseBoard
         boardData={{ id: 1, exerciseName: "Exercise name" }}
-        isActive={true}
+        lastBoardId={1}
         onNextExerciseClick={() => {}}
       ></ExerciseBoard>
     );

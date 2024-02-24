@@ -5,38 +5,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHourglass } from "@fortawesome/free-solid-svg-icons";
 
 type RestBtnProps = {
-  restSeconds: number
-  children?: React.ReactNode
-  readOnly: boolean
+  restSeconds: number;
+  children?: React.ReactNode;
+  readOnly: boolean;
 };
 
 export default function RestBtn({ restSeconds, readOnly }: RestBtnProps) {
   const onRestBtnClick = useContext(ExerciseBoardRestBtnClickContext);
-  // let bgColor;
-  
-  // if (restSeconds >= 60 && restSeconds < 120) {
-  //   bgColor = "bg-indigo-700";
-  // } else if (restSeconds >= 120) {
-  //   bgColor = "bg-indigo-800";
-  // } else {
-  //   bgColor = 'bg-indigo-600';
-  // }
 
   return (
-      <button
-        disabled={readOnly}
-        className='m-1 rounded-full text-white 
+    <button
+      disabled={readOnly}
+      className="m-1 rounded-full text-white 
         hover:scale-110 hover:bg-ecru hover:text-white
         bg-chinarose py-1 px-2 md:p-3 md:px-3 transition  
-        leading-5 focus:outline-none focus:ring disabled:bg-gray-400'
-        onClick={() => {
-          if (typeof onRestBtnClick === "function") {
-            onRestBtnClick(restSeconds);
-          }
-        }}
-      >
-        <FontAwesomeIcon icon={faHourglass} size="xs"></FontAwesomeIcon>
-        <span className="mx-1">{secondsToPrettyString(restSeconds)}</span>
-      </button>
+        leading-5 focus:outline-none focus:ring disabled:bg-gray-400"
+      onClick={() => {
+        if (typeof onRestBtnClick === "function") {
+          onRestBtnClick(restSeconds);
+        }
+      }}
+    >
+      <FontAwesomeIcon icon={faHourglass} size="xs"></FontAwesomeIcon>
+      <span className="mx-1">{secondsToPrettyString(restSeconds)}</span>
+    </button>
   );
 }

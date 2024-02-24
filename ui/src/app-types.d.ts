@@ -1,4 +1,3 @@
-import React, { MutableRefObject } from "react";
 import {
   TIMER_ACTIVITY_STATUS_EXERCISING,
   TIMER_ACTIVITY_STATUS_RESTING,
@@ -18,6 +17,10 @@ type SetsHistoryData = {
   activitySeconds: number
   restSeconds: number
 };
+
+type SetsHistoryDataList = {
+  [exerciseBoardId: number]: SetsHistoryData[]
+}
 
 type ExerciseBoardData = {
   id: number
