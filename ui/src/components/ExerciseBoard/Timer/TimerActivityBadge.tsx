@@ -46,12 +46,8 @@ export default function TimerActivityBadge({
             _sessionPaused() && "bg-white text-charcoal"
           )}
         >
-          {_sessionStarted() && _isExercising() && (
-            <FontAwesomeIcon icon={faDumbbell} size="lg" />
-          )}
-          {_sessionStarted() && _isResting() && (
-            <FontAwesomeIcon icon={faHourglass} size="lg" />
-          )}
+          {_sessionStarted() && _isExercising() && <FontAwesomeIcon icon={faDumbbell} size="lg" />}
+          {_sessionStarted() && _isResting() && <FontAwesomeIcon icon={faHourglass} size="lg" />}
           {_sessionStopped() && <FontAwesomeIcon icon={faStop} size="lg" />}
           {_sessionPaused() && <FontAwesomeIcon icon={faPause} size="lg" />}
           <p className="whitespace-nowrap ml-1 text-sm">
@@ -60,14 +56,12 @@ export default function TimerActivityBadge({
             {_sessionPaused() && "Paused"}
           </p>
         </span>
-      ): (
+      ) : (
         <span className="inline-flex items-center justify-center rounded-full px-2.5 py-0.5 bg-white text-gunmetal">
           <FontAwesomeIcon icon={faCheck} size="lg" />
-          <p className="whitespace-nowrap ml-1 text-sm">
-            Done
-          </p>
+          <p className="whitespace-nowrap ml-1 text-sm">Done</p>
         </span>
-        )}
+      )}
     </span>
   );
 }

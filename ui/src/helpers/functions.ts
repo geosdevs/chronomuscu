@@ -1,9 +1,12 @@
 import { SessionStatus, TimerActivityStatus } from "../app-types";
 import { SESSION_PAUSED, SESSION_STARTED, SESSION_STOPPED } from "../App";
-import { TIMER_ACTIVITY_STATUS_EXERCISING, TIMER_ACTIVITY_STATUS_RESTING } from "../components/ExerciseBoard/Timer/Timer";
+import {
+  TIMER_ACTIVITY_STATUS_EXERCISING,
+  TIMER_ACTIVITY_STATUS_RESTING,
+} from "../components/ExerciseBoard/Timer/Timer";
 
-export function getLastItem<T>(array: Array<T>): T|null {
-  return array[array.length - 1]
+export function getLastItem<T>(array: Array<T>): T | null {
+  return array[array.length - 1];
 }
 
 export function isExercising(timerActivityStatus: TimerActivityStatus) {

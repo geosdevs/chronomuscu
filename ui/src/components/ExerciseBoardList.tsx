@@ -16,10 +16,7 @@ export default function ExerciseBoardList({
   onNextExerciseClick,
   handleExerciseNameChange,
 }: ExerciseBoardListProps) {
-  const lastBoard = useMemo(
-    () => getLastItem<ExerciseBoardData>(exerciseBoards),
-    [exerciseBoards]
-  );
+  const lastBoard = useMemo(() => getLastItem<ExerciseBoardData>(exerciseBoards), [exerciseBoards]);
 
   return (
     <>
@@ -28,9 +25,7 @@ export default function ExerciseBoardList({
           key={`exercise-board-${exerciseBoard.id}`}
           value={handleExerciseNameChange.bind(null, exerciseBoard.id)}
         >
-          <div
-            className={activeBoardId === exerciseBoard.id ? "block" : "hidden"}
-          >
+          <div className={activeBoardId === exerciseBoard.id ? "block" : "hidden"}>
             <ExerciseBoard
               boardData={exerciseBoard}
               lastBoardId={lastBoard?.id ?? -1}

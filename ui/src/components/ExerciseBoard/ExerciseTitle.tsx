@@ -16,10 +16,7 @@ export default function ExerciseTitle({ exerciseBoard }: ExerciseTitleProps) {
   const inputTitleRef = useRef<null | HTMLInputElement>(null);
 
   function handleNewTitleSubmit(e: any) {
-    if (
-      typeof e.currentTarget?.value === "string" &&
-      e.currentTarget?.value
-    ) {
+    if (typeof e.currentTarget?.value === "string" && e.currentTarget?.value) {
       onTitleEdit(e.currentTarget.value);
     }
     setIsEditing(false);
@@ -70,8 +67,7 @@ export default function ExerciseTitle({ exerciseBoard }: ExerciseTitleProps) {
               setIsEditing(true);
 
               if (inputTitleRef.current instanceof HTMLInputElement) {
-                inputTitleRef.current.defaultValue =
-                  e.currentTarget.innerText.trim();
+                inputTitleRef.current.defaultValue = e.currentTarget.innerText.trim();
               }
             }}
           >

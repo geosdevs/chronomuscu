@@ -13,11 +13,11 @@ import { MouseEvent, useContext } from "react";
 import { OpenDialogContext } from "./App";
 
 type AppMenuProps = {
-  exerciseBoards: ExerciseBoardData[]
-  onExerciseBoardSelection: Function
-  activeBoardId: number
-  position: typeof MENU_POSITION_LEFT | typeof MENU_POSITION_BOTTOM
-  onSessionReset: Function
+  exerciseBoards: ExerciseBoardData[];
+  onExerciseBoardSelection: Function;
+  activeBoardId: number;
+  position: typeof MENU_POSITION_LEFT | typeof MENU_POSITION_BOTTOM;
+  onSessionReset: Function;
 };
 
 export const MENU_POSITION_LEFT = "left";
@@ -28,11 +28,10 @@ export default function AppMenu({
   onExerciseBoardSelection,
   activeBoardId,
   position,
-  onSessionReset
+  onSessionReset,
 }: AppMenuProps) {
   let exerciseBoardInc = 1;
-  const lastExerciseBoardId =
-    getLastItem<ExerciseBoardData>(exerciseBoards)?.id ?? 0;
+  const lastExerciseBoardId = getLastItem<ExerciseBoardData>(exerciseBoards)?.id ?? 0;
   const openDialogContext = useContext<OpenDialogCallback>(OpenDialogContext);
 
   function isMenuBottom() {
@@ -44,8 +43,8 @@ export default function AppMenu({
   }
 
   function onWipClick(e: MouseEvent) {
-    e.preventDefault()
-    alert('Todo');
+    e.preventDefault();
+    alert("Todo");
   }
 
   return (
@@ -128,7 +127,8 @@ export default function AppMenu({
           )}
         >
           <li>
-            <a href="/"
+            <a
+              href="/"
               className="group relative flex justify-center px-2 py-1.5 py-3 hover:bg-eerieblack hover:text-chinarose text-gray-500"
               onClick={(e) => {
                 e.preventDefault();
@@ -141,29 +141,25 @@ export default function AppMenu({
                     if (typeof onSessionReset === "function") {
                       onSessionReset();
                     }
-                  }
+                  },
                 });
               }}
-              >
+            >
               <FontAwesomeIcon icon={faRotateRight} />
               {isMenuLeft() && (
-                  <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
-                    Reset session
-                  </span>
-                )}
+                <span className="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">
+                  Reset session
+                </span>
+              )}
             </a>
           </li>
           {exerciseBoards.map((exerciseBoard) => (
-            <li
-              key={`app-menu-exercise-board-${exerciseBoard.id}`}
-              style={{ marginTop: 0 }}
-            >
+            <li key={`app-menu-exercise-board-${exerciseBoard.id}`} style={{ marginTop: 0 }}>
               <a
                 href="/"
                 className={clsx(
                   "group relative flex justify-center px-2 py-1.5 py-3 hover:bg-eerieblack hover:text-chinarose",
-                  activeBoardId === exerciseBoard.id &&
-                    "bg-eerieblack text-chinarose",
+                  activeBoardId === exerciseBoard.id && "bg-eerieblack text-chinarose",
                   activeBoardId !== exerciseBoard.id && "text-frenchgray",
                   exerciseBoard.id === lastExerciseBoardId &&
                     activeBoardId !== exerciseBoard.id &&

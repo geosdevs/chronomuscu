@@ -11,49 +11,44 @@ import {
   SetsHistoryDataList,
   TimerActivityStatus,
 } from "../../app-types";
-import {
-  getLastSetHistory, savePendingSetsHistoryData,
-} from "./Timer/sets-table-functions";
+import { getLastSetHistory, savePendingSetsHistoryData } from "./Timer/sets-table-functions";
 import NextExerciseBtn from "./NextExerciseBtn";
 import ExerciseTitle from "./ExerciseTitle";
 import { SESSION_STARTED, SessionStateContext } from "../../App";
 import { getLastItem } from "../../helpers/functions";
 
 type ExerciseBoardProps = {
-  boardData: ExerciseBoardData
-  onNextExerciseClick: Function
-  lastBoardId: number
+  boardData: ExerciseBoardData;
+  onNextExerciseClick: Function;
+  lastBoardId: number;
 };
 
 export const PENDING_SETS_HISTORY_ITEM_KEY = "pending-sets-history-data";
 
-export const ExerciseBoardRestBtnClickContext = createContext<null | Function>(
-  null
-);
-export const ExerciseBoardSetsHistoryRemoveContext =
-  createContext<null | Function>(null);
+export const ExerciseBoardRestBtnClickContext = createContext<null | Function>(null);
+export const ExerciseBoardSetsHistoryRemoveContext = createContext<null | Function>(null);
 
 export default function ExerciseBoard({
   boardData,
   onNextExerciseClick,
-  lastBoardId
+  lastBoardId,
 }: ExerciseBoardProps) {
-  const [timerActivityStatus, setTimerActivityStatus] =
-    useState<TimerActivityStatus>(TIMER_ACTIVITY_STATUS_EXERCISING);
+  const [timerActivityStatus, setTimerActivityStatus] = useState<TimerActivityStatus>(
+    TIMER_ACTIVITY_STATUS_EXERCISING
+  );
   const [timerInitSeconds, setTimerInitSeconds] = useState<number>(0);
   const [chosenRestingTimerMs, setChosenRestingTimerMs] = useState<number>(0);
   const [restTimers, setRestTimers] = useState<number[]>([]);
   const setsHistoryRef = useRef<SetsHistoryData[]>([]);
   // only to trigger a new UI render when removing a set history
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [latestRemovedHistory, setLatestRemovedHistory] =
-    useState<SetsHistoryData | null>(null);
+  const [latestRemovedHistory, setLatestRemovedHistory] = useState<SetsHistoryData | null>(null);
   const setSessionState = useContext(SessionStateContext)[1];
   const readOnly = lastBoardId !== boardData.id;
 
   useEffect(() => {
     // todo remove tmp effect
-    if (localStorage.getItem('env')?.toUpperCase() === 'DEV') {
+    if (localStorage.getItem("env")?.toUpperCase() === "DEV") {
       setRestTimers([2, 5, 10, 30, 60, 90, 120, 180, 300]);
     } else {
       setRestTimers([10, 20, 30, 60, 90, 120, 180, 300]);
@@ -72,7 +67,7 @@ export default function ExerciseBoard({
     } catch (exception) {
       console.log("Init exercise boards");
       pendingSetsHistoryDataList = {
-        [boardData.id]: []
+        [boardData.id]: [],
       };
     } finally {
       pendingSetsHistoryData = pendingSetsHistoryDataList[boardData.id];
@@ -103,14 +98,12 @@ export default function ExerciseBoard({
 
   function handleSetHistoryRemove(setHistoryId: number) {
     if (!readOnly) {
-      setsHistoryRef.current = setsHistoryRef.current.filter(
-        (setHistory: SetsHistoryData) => {
-          if (setHistory.id === setHistoryId) {
-            setLatestRemovedHistory(setHistory);
-          }
-          return setHistory.id !== setHistoryId;
+      setsHistoryRef.current = setsHistoryRef.current.filter((setHistory: SetsHistoryData) => {
+        if (setHistory.id === setHistoryId) {
+          setLatestRemovedHistory(setHistory);
         }
-      );
+        return setHistory.id !== setHistoryId;
+      });
       savePendingSetsHistoryData(boardData.id, setsHistoryRef.current);
     }
   }
@@ -119,15 +112,11 @@ export default function ExerciseBoard({
     <div className="my-2 p-2 md:pl-4">
       <div className="flex">
         <ExerciseTitle exerciseBoard={boardData}></ExerciseTitle>
-        <NextExerciseBtn
-          onNextExerciseClick={onNextExerciseClick}
-        ></NextExerciseBtn>
+        <NextExerciseBtn onNextExerciseClick={onNextExerciseClick}></NextExerciseBtn>
       </div>
 
       <div className="md:w-fit mx-2 my-4 grid">
-        <ExerciseBoardSetsHistoryRemoveContext.Provider
-          value={handleSetHistoryRemove}
-        >
+        <ExerciseBoardSetsHistoryRemoveContext.Provider value={handleSetHistoryRemove}>
           <Timer
             key={`timer-status-${timerActivityStatus}-amount-${timerInitSeconds}-rest-${chosenRestingTimerMs}`}
             timerInitSeconds={timerInitSeconds}

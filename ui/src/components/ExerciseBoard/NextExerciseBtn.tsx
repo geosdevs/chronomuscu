@@ -2,12 +2,10 @@ import { faForward } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type NextExerciseBtnProps = {
-  onNextExerciseClick: Function
+  onNextExerciseClick: Function;
 };
 
-export default function NextExerciseBtn({
-  onNextExerciseClick,
-}: NextExerciseBtnProps) {
+export default function NextExerciseBtn({ onNextExerciseClick }: NextExerciseBtnProps) {
   return (
     <a
       className="group ml-6 relative inline-block text-sm font-bold text-chinarose hover:text-ecru focus:outline-none active:text-slate-500 transition-colors duration-200"

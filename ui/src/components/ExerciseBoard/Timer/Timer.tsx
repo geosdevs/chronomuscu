@@ -1,14 +1,5 @@
-import {
-  MutableRefObject,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import {
-  SECONDS_FORMAT_TIMER,
-  secondsToPrettyString,
-} from "../../../helpers/time";
+import { MutableRefObject, useContext, useEffect, useRef, useState } from "react";
+import { SECONDS_FORMAT_TIMER, secondsToPrettyString } from "../../../helpers/time";
 import PlayToolbar from "./PlayToolbar";
 import Goal from "../Goal";
 import SetsTable from "./SetsTable";
@@ -58,13 +49,9 @@ export default function Timer({
   readOnly,
   savePendingSetsHistoryData,
 }: TimerProps) {
-  const [timerStateMs, setTimerStateMs] = useState<number>(
-    getTimerInitValueMs()
-  );
+  const [timerStateMs, setTimerStateMs] = useState<number>(getTimerInitValueMs());
   const [sessionSate, setSessionState] = useContext(SessionStateContext);
-  const savePendingExerciseBoardsData = useContext(
-    SavePendingExerciseBoardsDataContext
-  );
+  const savePendingExerciseBoardsData = useContext(SavePendingExerciseBoardsDataContext);
   const refTimerId = useRef<NodeJS.Timer | null>(null);
   let restingProgress = 0;
   const _isResting = isResting.bind(null, timerActivityStatus);
@@ -73,10 +60,7 @@ export default function Timer({
   const _sessionPaused = sessionPaused.bind(null, sessionSate);
   const _sessionStarted = sessionStarted.bind(null, sessionSate);
 
-  if (
-    chosenRestingTimerMs > 0 &&
-    timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING
-  ) {
+  if (chosenRestingTimerMs > 0 && timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING) {
     restingProgress = (timerStateMs / chosenRestingTimerMs) * 100;
   }
 
@@ -91,9 +75,7 @@ export default function Timer({
 
                 if (timerActivityStatus === TIMER_ACTIVITY_STATUS_EXERCISING) {
                   timerMs += TIME_INTERVAL_MS;
-                } else if (
-                  timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING
-                ) {
+                } else if (timerActivityStatus === TIMER_ACTIVITY_STATUS_RESTING) {
                   timerMs -= TIME_INTERVAL_MS;
                 } else {
                   throw new Error("Unknown activity status");
@@ -193,15 +175,11 @@ export default function Timer({
               <span
                 className={clsx(
                   "font-bold text-5xl",
-                  [SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) &&
-                    "text-frenchgray",
+                  [SESSION_PAUSED, SESSION_STOPPED].includes(sessionSate) && "text-frenchgray",
                   SESSION_STARTED === sessionSate && "text-darkbrown"
                 )}
               >
-                {secondsToPrettyString(
-                  timerStateMs / 1000,
-                  SECONDS_FORMAT_TIMER
-                )}
+                {secondsToPrettyString(timerStateMs / 1000, SECONDS_FORMAT_TIMER)}
               </span>
             </div>
 
@@ -210,19 +188,12 @@ export default function Timer({
               role="progressbar"
               aria-labelledby="ProgressLabel"
               className={clsx("block rounded-full my-2", {
-                "bg-gray-200":
-                  readOnly ||
-                  _isResting() ||
-                  _sessionStopped() ||
-                  _sessionPaused(),
+                "bg-gray-200": readOnly || _isResting() || _sessionStopped() || _sessionPaused(),
                 "bg-sunset": !readOnly && _isExercising() && _sessionStarted(),
               })}
             >
               <span
-                className={clsx(
-                  "block h-3 rounded-full",
-                  _isResting() && "bg-charcoal"
-                )}
+                className={clsx("block h-3 rounded-full", _isResting() && "bg-charcoal")}
                 style={{ width: restingProgress + "%" }}
               ></span>
             </span>

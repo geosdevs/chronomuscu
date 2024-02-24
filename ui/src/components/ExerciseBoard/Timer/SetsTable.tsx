@@ -1,24 +1,11 @@
 import React, { Fragment, MutableRefObject, useContext } from "react";
 import { secondsToPrettyString } from "../../../helpers/time";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDumbbell,
-  faHashtag,
-  faHourglass,
-  faXmark,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  SetsHistoryData,
-  TimerActivityStatus,
-} from "../../../app-types";
+import { faDumbbell, faHashtag, faHourglass, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { SetsHistoryData, TimerActivityStatus } from "../../../app-types";
 import { TIMER_ACTIVITY_STATUS_EXERCISING, TIME_INTERVAL_MS } from "./Timer";
-import {
-  ExerciseBoardSetsHistoryRemoveContext,
-} from "../ExerciseBoard";
-import {
-  getCurrentSetHistory,
-  getNextSetHistoryId,
-} from "./sets-table-functions";
+import { ExerciseBoardSetsHistoryRemoveContext } from "../ExerciseBoard";
+import { getCurrentSetHistory, getNextSetHistoryId } from "./sets-table-functions";
 import clsx from "clsx";
 import { SESSION_STARTED, SessionStateContext } from "../../../App";
 
@@ -69,9 +56,7 @@ export default function SetsTable({
           const rowStartClass = `row-start-${index + 1}`;
           return (
             <Fragment key={row.id}>
-              <div
-                className={"col-start-1 col-span-1 mx-2 my-1 " + rowStartClass}
-              >
+              <div className={"col-start-1 col-span-1 mx-2 my-1 " + rowStartClass}>
                 <FontAwesomeIcon icon={faHashtag} size="lg" />
                 <span className="text-lg font-bold">{rowInc++}</span>
               </div>

@@ -7,7 +7,7 @@ export type DialogContentProps = {
   onCancelClick?: Function;
   submitLabel?: string;
   cancelLabel?: string;
-  backdropClose?: boolean
+  backdropClose?: boolean;
 };
 
 type DialogProps = {
@@ -20,15 +20,8 @@ const Dialog = forwardRef(function (
   dialogRef: ForwardedRef<HTMLDialogElement>
 ) {
   const { onClose, contentProps } = props;
-  const {
-    title,
-    content,
-    onCancelClick,
-    onSubmitClick,
-    cancelLabel,
-    submitLabel,
-    backdropClose
-  } = contentProps;
+  const { title, content, onCancelClick, onSubmitClick, cancelLabel, submitLabel, backdropClose } =
+    contentProps;
 
   return (
     <dialog
@@ -87,10 +80,7 @@ const Dialog = forwardRef(function (
                   </svg>
                 </div>
                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                  <h3
-                    className="text-base font-semibold leading-6 text-gray-900"
-                    id="modal-title"
-                  >
+                  <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">
                     {title}
                   </h3>
                   <div className="mt-2">

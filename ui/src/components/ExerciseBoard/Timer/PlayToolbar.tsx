@@ -3,16 +3,16 @@ import { SessionStatus } from "../../../app-types";
 import { SESSION_PAUSED, SESSION_STARTED } from "../../../App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPause, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
-import './PlayToolbar.css'
+import "./PlayToolbar.css";
 import clsx from "clsx";
 import { SessionStateContext } from "../../../App";
 
 type PlayToolbarProps = {
-  onPlayClick: () => void
-  onPauseClick: () => void
-  onStopClick: Function
-  sessionSate: SessionStatus
-  readonly: boolean
+  onPlayClick: () => void;
+  onPauseClick: () => void;
+  onStopClick: Function;
+  sessionSate: SessionStatus;
+  readonly: boolean;
 };
 
 type PlayPauseBtnState = typeof PLAY_BTN_STATE | typeof PAUSE_BTN_STATE;
@@ -24,7 +24,7 @@ export default function PlayToolbar({
   onPlayClick,
   onPauseClick,
   onStopClick,
-  readonly
+  readonly,
 }: PlayToolbarProps) {
   const sessionSate = useContext(SessionStateContext)[0];
   const [playPauseBtnState, setPlayPauseBtnState] = useState<PlayPauseBtnState>(
@@ -53,10 +53,12 @@ export default function PlayToolbar({
             }
           }
         }}
-        >
-        {getPlayPauseBtnState() === PLAY_BTN_STATE
-          ? <FontAwesomeIcon icon={faPause} />
-          : <FontAwesomeIcon icon={faPlay} />}
+      >
+        {getPlayPauseBtnState() === PLAY_BTN_STATE ? (
+          <FontAwesomeIcon icon={faPause} />
+        ) : (
+          <FontAwesomeIcon icon={faPlay} />
+        )}
       </button>
       <button
         disabled={sessionSate !== SESSION_PAUSED}
@@ -70,7 +72,7 @@ export default function PlayToolbar({
             onStopClick();
           }
         }}
-        >
+      >
         <FontAwesomeIcon icon={faStop} />
       </button>
     </span>
