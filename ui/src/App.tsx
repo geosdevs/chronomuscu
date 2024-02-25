@@ -6,7 +6,7 @@ import { exerciseBoardsData } from "./components/ExerciseBoard/setsData";
 import { getLastItem, missingImplementation } from "./helpers/functions";
 import { useImmer } from "use-immer";
 import { OpenDialogCallback, SessionStatus } from "./app-types";
-import { resetPendingSetsHistoryData } from "./components/ExerciseBoard/Timer/sets-table-functions";
+import { resetPendingSetsHistoryData } from "./helpers/sets-table-functions";
 import Dialog, { DialogContentProps } from "./ui/Dialog";
 
 export type ExerciseBoardData = {

@@ -1,9 +1,15 @@
-import { SetsHistoryData, SetsHistoryDataList } from "../../../app-types";
-import { getLastItem } from "../../../helpers/functions";
-import { PENDING_SETS_HISTORY_ITEM_KEY } from "../ExerciseBoard";
+import { SetsHistoryData, SetsHistoryDataList } from "../app-types";
+import { PENDING_SETS_HISTORY_ITEM_KEY } from "../components/ExerciseBoard/ExerciseBoard";
 
-export function getLastSetHistory(setsHistory: SetsHistoryData[]) {
-  return getLastItem<SetsHistoryData>(setsHistory);
+export function getLastSetHistory(setsHistory: SetsHistoryData[]): SetsHistoryData | null {
+  let lastSetHistory = null;
+
+  if (setsHistory.length > 0) {
+    lastSetHistory = setsHistory.reduce((previousSet, currentSet) =>
+      currentSet.id > previousSet.id ? currentSet : previousSet
+    );
+  }
+  return lastSetHistory;
 }
 
 export function getNextSetHistoryId(setsHistory: SetsHistoryData[]): number {

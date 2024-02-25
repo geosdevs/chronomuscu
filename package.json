@@ -1,7 +1,0 @@
-{
-  "name": "chronomuscu-packages",
-  "workspaces": [
-    "ui",
-    "api"
-  ]
-}

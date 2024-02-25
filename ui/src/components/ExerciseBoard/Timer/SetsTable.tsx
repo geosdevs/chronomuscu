@@ -5,7 +5,7 @@ import { faDumbbell, faHashtag, faHourglass, faXmark } from "@fortawesome/free-s
 import { SetsHistoryData, TimerActivityStatus } from "../../../app-types";
 import { TIMER_ACTIVITY_STATUS_EXERCISING, TIME_INTERVAL_MS } from "./Timer";
 import { ExerciseBoardSetsHistoryRemoveContext } from "../ExerciseBoard";
-import { getCurrentSetHistory, getNextSetHistoryId } from "./sets-table-functions";
+import { getCurrentSetHistory, getNextSetHistoryId } from "../../../helpers/sets-table-functions";
 import clsx from "clsx";
 import { SESSION_STARTED, SessionStateContext } from "../../../App";
 

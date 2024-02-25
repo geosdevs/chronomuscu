@@ -4,9 +4,10 @@ import {
   TIMER_ACTIVITY_STATUS_EXERCISING,
   TIMER_ACTIVITY_STATUS_RESTING,
 } from "../components/ExerciseBoard/Timer/Timer";
+import MissingImplementationError from "../exceptions/missing-implementation";
 
 export function getLastItem<T>(array: Array<T>): T | null {
-  return array[array.length - 1];
+  return array[array.length - 1] ?? null;
 }
 
 export function isExercising(timerActivityStatus: TimerActivityStatus) {
@@ -30,5 +31,5 @@ export function sessionPaused(sessionSate: SessionStatus) {
 }
 
 export function missingImplementation() {
-  throw new Error("Missing implementation");
+  throw new MissingImplementationError("Missing implementation");
 }

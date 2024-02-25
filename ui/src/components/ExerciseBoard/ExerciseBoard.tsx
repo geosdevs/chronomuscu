@@ -11,7 +11,7 @@ import {
   SetsHistoryDataList,
   TimerActivityStatus,
 } from "../../app-types";
-import { getLastSetHistory, savePendingSetsHistoryData } from "./Timer/sets-table-functions";
+import { getLastSetHistory, savePendingSetsHistoryData } from "../../helpers/sets-table-functions";
 import NextExerciseBtn from "./NextExerciseBtn";
 import ExerciseTitle from "./ExerciseTitle";
 import { SESSION_STARTED, SessionStateContext } from "../../App";
