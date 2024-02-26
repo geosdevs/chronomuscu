@@ -1,0 +1,11 @@
+apiVersion: v2
+name: Chronomuscu
+version: 1.0.0
+kubeVersion: 1.27.x
+description: React app
+sources:
+  - https://github.com/geosdevs/chronomuscu/tree/main
+maintainers:
+  - name: geosdevs
+    email: "donthave@email.com"
+    url: https://github.com/geosdevs

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: chronomuscu
+    container: ui
+  name: chronomuscu-ui-deploy
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: chronomuscu
+      container: ui
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: chronomuscu
+        container: ui
+    spec:
+      containers:
+      - image: "{{ .Values.containers.ui.imageRegistry }}chronomuscu-ui:{{ .Values.containers.ui.imageTag }}"
+        name: chronomuscu-ui
+        ports:
+          - containerPort: 4200
+            name: serve
+            protocol: TCP
+        resources:
+          limits:
+            cpu: 1
+            memory: 50Mi

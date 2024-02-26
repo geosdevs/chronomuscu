@@ -1,0 +1,4 @@
+containers:
+  ui:
+    imageRegistry: ""
+    imageTag: "latest"
